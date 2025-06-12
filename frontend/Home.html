@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geminii Tecnologia</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            dark: '#000000',
+            light: '#ffffff',
+            subtle: 'rgba(255,255,255,0.1)',
+            geminii: '#ba39af'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Remove scroll horizontal */
+    body {
+      overflow-x: hidden;
+    }
+
+    /* Card de Cristal Hero */
+    .hero-crystal-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px) brightness(0.9);
+      -webkit-backdrop-filter: blur(20px) brightness(0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 24px;
+      padding: clamp(25px, 4vw, 50px);
+      max-width: 800px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 0 30px rgba(186, 57, 175, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .hero-crystal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transition: left 3s ease;
+    }
+
+    .hero-crystal-card:hover::before {
+      left: 100%;
+    }
+
+    /* Responsivo Card */
+    @media (max-width: 768px) {
+      .hero-crystal-card {
+        margin: 0 20px;
+        padding: 20px 15px;
+        border-radius: 20px;
+      }
+    }
+
+    /* Neon Logo Effect on Hover */
+    .neon-logo {
+      transition: all 0.3s ease;
+      border-radius: 4px;
+    }
+    
+    .neon-logo:hover {
+      filter: 
+        drop-shadow(0 0 5px #ba39af)
+        drop-shadow(0 0 10px #ba39af)
+        drop-shadow(0 0 15px #ba39af)
+        drop-shadow(0 0 20px #ba39af)
+        brightness(1.2);
+      transform: scale(1.1);
+    }
+
+    /* Navbar Neon Effect on Hover */
+    nav:hover {
+      background: rgba(186, 57, 175, 0.05);
+      border-color: rgba(186, 57, 175, 0.3);
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 0 20px rgba(186, 57, 175, 0.2),
+        0 0 40px rgba(186, 57, 175, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    /* Menu Links Neon Effect on Hover */
+    nav a:hover {
+      color: #ba39af;
+      text-shadow: 
+        0 0 5px #ba39af,
+        0 0 10px #ba39af,
+        0 0 15px #ba39af;
+      transition: all 0.3s ease;
+    }
+
+    /* DROPDOWN STYLES - CLICK BASED */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-toggle {
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .dropdown-toggle::after {
+      content: '▼';
+      font-size: 8px;
+      transition: transform 0.3s ease;
+    }
+
+    .dropdown.active .dropdown-toggle::after {
+      transform: rotate(180deg);
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px) brightness(0.9);
+      -webkit-backdrop-filter: blur(20px) brightness(0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      min-width: 600px;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      padding: 24px;
+      margin-top: 8px;
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        0 0 30px rgba(186, 57, 175, 0.1);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .dropdown.active .dropdown-content {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .dropdown-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .dropdown-item {
+      padding: 16px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+      background: rgba(186, 57, 175, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .dropdown-item h4 {
+      color: #ba39af;
+      font-size: 15px;
+      font-weight: 750;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dropdown-item p {
+      color: rgba(3, 3, 3, 0.7);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .dropdown-badge {
+      background: #10b981;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    /* Newsletter Input Neon Effect */
+    .newsletter-input:focus {
+      border-color: #ba39af;
+      box-shadow: 
+        0 0 10px rgba(186, 57, 175, 0.3),
+        0 0 20px rgba(186, 57, 175, 0.1);
+    }
+
+    .newsletter-btn:hover {
+      box-shadow: 
+        0 10px 25px -5px rgba(0, 0, 0, 0.1),
+        0 0 15px rgba(186, 57, 175, 0.2);
+    }
+
+    /* Social Media Icons */
+    .social-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 20px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .social-icon:hover {
+      color: #ba39af;
+      border-color: #ba39af;
+      background: rgba(186, 57, 175, 0.1);
+      box-shadow: 
+        0 0 15px rgba(186, 57, 175, 0.3),
+        0 0 30px rgba(186, 57, 175, 0.1);
+      transform: translateY(-3px) scale(1.1);
+    }
+
+    /* Footer Links */
+    .footer-link {
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .footer-link:hover {
+      color: #ba39af;
+      text-shadow: 0 0 8px rgba(186, 57, 175, 0.5);
+    }
+
+    /* Geminii Text Color */
+    .text-geminii {
+      color: #ba39af;
+    }
+
+    .text-geminii-purple {
+      color: #ba39af;
+    }
+
+    /* GRÁFICO INTERATIVO COM ANIMAÇÕES AVANÇADAS */
+    .chart-container {
+      background: transparent;
+      padding: 30px 20px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at center, rgba(186, 57, 175, 0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+
+    .chart-container:hover::before {
+      opacity: 1;
+    }
+
+    .animated-chart {
+      width: 100%;
+      height: auto;
+      max-width: 550px;
+      margin: 0 auto;
+      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      filter: drop-shadow(0 10px 20px rgba(186, 57, 175, 0.1));
+    }
+
+    .chart-container:hover .animated-chart {
+      transform: translateY(-10px) scale(1.05);
+      filter: drop-shadow(0 20px 40px rgba(186, 57, 175, 0.2));
+    }
+
+    /* Animação inicial da linha */
+    .chart-line {
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      animation: drawLine 3s ease-in-out forwards;
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover .chart-line {
+      stroke-width: 4;
+      filter: drop-shadow(0 0 8px #ba39af);
+    }
+
+    /* Área do gráfico */
+    .chart-area {
+      opacity: 0;
+      animation: fadeInArea 2s ease-in-out 1.5s forwards;
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover .chart-area {
+      opacity: 0.8;
+    }
+
+    /* Pontos interativos */
+    .chart-points circle {
+      opacity: 0;
+      transform-origin: center;
+      animation: popInPoints 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .chart-container:hover .chart-points circle {
+      opacity: 1;
+      r: 6;
+      filter: drop-shadow(0 0 6px #ba39af);
+    }
+
+    .chart-points circle:hover {
+      r: 8;
+      filter: drop-shadow(0 0 12px #ba39af);
+      stroke: rgba(255, 255, 255, 0.8);
+      stroke-width: 2;
+    }
+
+    /* Tooltip para os pontos */
+    .chart-tooltip {
+      position: absolute;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(186, 57, 175, 0.3);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .chart-tooltip.show {
+      opacity: 1;
+      transform: translateY(-15px);
+    }
+
+    /* Grid animado */
+    .chart-grid {
+      opacity: 0.3;
+      transition: opacity 0.3s ease;
+    }
+
+    .chart-container:hover .chart-grid {
+      opacity: 0.6;
+    }
+
+    /* Labels dos eixos com animação */
+    .axis-label {
+      opacity: 0;
+      animation: fadeInLabels 1s ease-out 2s forwards;
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover .axis-label {
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    /* Delays para animação sequencial dos pontos */
+    .chart-points circle:nth-child(1) { animation-delay: 2.5s; }
+    .chart-points circle:nth-child(2) { animation-delay: 2.7s; }
+    .chart-points circle:nth-child(3) { animation-delay: 2.9s; }
+    .chart-points circle:nth-child(4) { animation-delay: 3.1s; }
+    .chart-points circle:nth-child(5) { animation-delay: 3.3s; }
+    .chart-points circle:nth-child(6) { animation-delay: 3.5s; }
+    .chart-points circle:nth-child(7) { animation-delay: 3.7s; }
+    .chart-points circle:nth-child(8) { animation-delay: 3.9s; }
+
+    /* Keyframes */
+    @keyframes drawLine {
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    @keyframes fadeInArea {
+      to {
+        opacity: 0.6;
+      }
+    }
+
+    @keyframes popInPoints {
+      0% {
+        opacity: 0;
+        transform: scale(0);
+      }
+      80% {
+        transform: scale(1.3);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fadeInLabels {
+      to {
+        opacity: 0.7;
+      }
+    }
+
+    /* Pulse do gráfico inteiro */
+    @keyframes chartPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.02);
+      }
+    }
+
+    .chart-container:hover .animated-chart {
+      animation: chartPulse 2s ease-in-out infinite;
+    }
+
+    /* Chart Text Animation */
+    .chart-text {
+      animation: slideInRight 1s ease-out 0.5s both;
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover + .chart-text {
+      transform: translateX(5px);
+    }
+
+    .chart-text h3 {
+      animation: fadeInUp 1s ease-out 1s both;
+    }
+
+    .chart-text p {
+      animation: fadeInUp 1s ease-out 1.5s both;
+    }
+
+    .chart-text button {
+      animation: fadeInUp 1s ease-out 2s both;
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive Chart */
+    @media (max-width: 1024px) {
+      .chart-container {
+        order: 2;
+        margin-top: 2rem;
+      }
+      
+      .chart-text {
+        order: 1;
+        text-align: center;
+      }
+    }
+
+    /* Efeito de brilho no hover do botão */
+    .glow-button {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glow-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .glow-button:hover::before {
+      left: 100%;
+    }
+
+    /* API Status Indicator */
+    .api-status {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      padding: 10px 15px;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .api-status.online {
+      border-color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .api-status.offline {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* Loading States */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .spinner {
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top: 2px solid #ba39af;
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-left: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-black text-white font-sans">
+  <div class="relative min-h-screen overflow-hidden">
+    <!-- Spline 3D background -->
+    <div class="fixed inset-0 z-0">
+      <iframe src="https://my.spline.design/thresholddarkambientui-v0gkZCfi6zXm69kE0wccy70f/" frameborder="0" width="100%" height="100%" class="w-full h-full"></iframe>
+    </div>
+    
+    <!-- Glass floating navbar -->
+    <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-opacity-5 border-opacity-10 bg-white border-white border rounded-full pt-3 pr-4 pb-3 pl-4 shadow-xl backdrop-blur-md">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <img src="https://app.geminii.com.br/wp-content/uploads/2025/06/logo.png" alt="Geminii Logo" class="w-6 h-6 neon-logo">
+        </div>
+        <div class="hidden md:flex items-center space-x-6 text-xs text-gray-300 ml-8">
+          <a href="/" class="hover:text-white transition-colors">Home</a>
+          
+          <!-- Dropdown Opções -->
+          <div class="dropdown">
+            <span class="dropdown-toggle hover:text-white transition-colors">Opções</span>
+            <div class="dropdown-content">
+              <div class="dropdown-grid">
+                <div class="dropdown-item">
+                  <h4>Scanner de Opções</h4>
+                  <p>Encontre as melhores oportunidades em opções com filtros avançados e análise em tempo real.</p>
+                </div>
+                <div class="dropdown-item">
+                  <h4>Estratégias Prontas</h4>
+                  <p>Acesse estratégias pré-configuradas para diferentes cenários de mercado.</p>
+                </div>
+                <div class="dropdown-item">
+                  <h4>Calculadora de Greeks</h4>
+                  <p>Calcule Delta, Gamma, Theta e Vega para otimizar suas posições.</p>
+                </div>
+                <div class="dropdown-item">
+                  <h4>Volatilidade Implícita <span class="dropdown-badge">Novo</span></h4>
+                  <p>Monitore a volatilidade implícita e identifique oportunidades de arbitragem.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dropdown Rastreio -->
+          <div class="dropdown">
+            <span class="dropdown-toggle hover:text-white transition-colors">Rastreio</span>
+            <div class="dropdown-content">
+              <div class="dropdown-grid">
+                <div class="dropdown-item">
+                  <h4>Backtests</h4>
+                  <p>Simule e teste diferentes estratégias quantitativas.</p>
+                </div>
+                <div class="dropdown-item">
+                  <h4>Suportes e Resistências</h4>
+                  <p>Identifique zonas de suportes e resistências.</p>
+                </div>
+                <div class="dropdown-item">
+                  <h4>Retorno Histórico</h4>
+                  <p>Calcule o retorno histórico de um portfólio.</p>
+                </div>
+                <div class="dropdown-item">
+                  <h4>Carteiras Quantitativas <span class="dropdown-badge">Novo</span></h4>
+                  <p>Calcule o retorno de carteiras com rebalanceamento automático.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <a href="/acoes" class="hover:text-white transition-colors">Ações</a>
+          <a href="#" class="hover:text-white transition-colors">Análises</a>
+          <a href="#" class="hover:text-white transition-colors">Contato</a>
+        </div>
+        <div class="flex items-center space-x-3 ml-8">
+          <div id="apiStatus" class="w-8 h-8 bg-green-500 bg-opacity-10 border border-green-500 border-opacity-30 rounded-full flex items-center justify-center relative">
+            <i class="fas fa-shield-alt text-green-500 text-xs"></i>
+            <div class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          </div>
+          <a href="#" class="hidden md:inline-block text-xs font-medium hover:text-white transition-colors">Login</a>
+          <a href="#" class="hover:bg-gray-200 transition-colors text-xs font-medium text-black bg-white rounded-full pt-1.5 pr-3 pb-1.5 pl-3">Começar</a>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Hero content -->
+    <div class="relative z-10 flex flex-col justify-center px-6 pt-56 pb-32 md:pt-64 md:pb-40 min-h-screen">
+      <div class="absolute top-1/2 left-1/2 w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2 bg-white opacity-5 blur-[100px] rounded-full pointer-events-none"></div>
+      
+      <!-- Hero Text Alinhado à Esquerda -->
+      <div class="max-w-6xl mx-auto w-full text-left">
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-6">
+          <span style="color: #ba39af; font-weight: 900;">Geminii Tech</span><br>
+          <span class="text-white font-light">Trading Automatizado</span><br>
+          <span class="text-white font-light"></span>
+        </h1>
+        
+        <p class="md:text-lg text-base text-neutral-300 mt-6 max-w-2xl leading-relaxed">
+          Onde a inteligência artificial encontra estratégias de mercado 
+          com visão quantitativa e automação completa.
+        </p>
+        
+        <div class="mt-12 flex flex-col sm:flex-row gap-6">
+          <a href="#" class="px-10 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-pink-500/25 transition-all duration-300 transform hover:scale-105">
+            Começar Automação
+          </a>
+          <a href="#" class="px-10 py-4 bg-white bg-opacity-10 backdrop-blur-sm text-white font-semibold rounded-full hover:bg-opacity-20 transition-all duration-300 border border-white border-opacity-20">
+            Ver Estratégias
+          </a>
+        </div>
+      </div>
+
+      <!-- Chart Section -->
+      <div class="mt-48 w-full max-w-6xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <!-- Chart Container -->
+          <div class="chart-container relative">
+            <svg class="animated-chart" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+              <!-- Grid Lines -->
+              <defs>
+                <pattern id="grid" width="50" height="30" patternUnits="userSpaceOnUse">
+                  <path d="M 50 0 L 0 0 0 30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" stroke-dasharray="2,2"/>
+                </pattern>
+                <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style="stop-color:#ba39af;stop-opacity:0.5" />
+                  <stop offset="100%" style="stop-color:#ba39af;stop-opacity:0.1" />
+                </linearGradient>
+              </defs>
+              
+              <rect class="chart-grid" width="100%" height="100%" fill="url(#grid)" />
+              
+              <!-- Y-axis Labels Centralizados -->
+              <text x="45" y="50" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 156k</text>
+              <text x="45" y="90" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 135k</text>
+              <text x="45" y="130" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 117k</text>
+              <text x="45" y="170" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 107k</text>
+              <text x="45" y="210" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 98k</text>
+              <text x="45" y="250" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 85k</text>
+              
+              <!-- X-axis Labels Centralizados -->
+              <text x="80" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">jun/24</text>
+              <text x="150" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">ago/24</text>
+              <text x="220" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">out/24</text>
+              <text x="290" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">jan/25</text>
+              <text x="360" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">jun/25</text>
+              <text x="430" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">ago/25</text>
+              
+              <!-- Area Fill -->
+              <path class="chart-area" d="M50,220 L80,210 L110,200 L140,190 L170,175 L200,165 L230,150 L260,140 L290,125 L320,115 L350,100 L380,85 L410,70 L430,50 L430,260 L50,260 Z" 
+                    fill="url(#areaGradient)"/>
+              
+              <!-- Main Line -->
+              <path class="chart-line" d="M50,220 L80,210 L110,200 L140,190 L170,175 L200,165 L230,150 L260,140 L290,125 L320,115 L350,100 L380,85 L410,70 L430,50" 
+                    fill="none" stroke="#ba39af" stroke-width="3"/>
+              
+              <!-- Interactive Points -->
+              <g class="chart-points">
+                <circle cx="80" cy="210" r="4" fill="#ba39af" data-value="R$ 95.500" data-date="jun/24"/>
+                <circle cx="110" cy="200" r="4" fill="#ba39af" data-value="R$ 102.300" data-date="jul/24"/>
+                <circle cx="140" cy="190" r="4" fill="#ba39af" data-value="R$ 108.750" data-date="ago/24"/>
+                <circle cx="170" cy="175" r="4" fill="#ba39af" data-value="R$ 115.200" data-date="set/24"/>
+                <circle cx="200" cy="165" r="4" fill="#ba39af" data-value="R$ 120.800" data-date="out/24"/>
+                <circle cx="230" cy="150" r="4" fill="#ba39af" data-value="R$ 127.400" data-date="nov/24"/>
+                <circle cx="260" cy="140" r="4" fill="#ba39af" data-value="R$ 132.600" data-date="dez/24"/>
+                <circle cx="290" cy="125" r="4" fill="#ba39af" data-value="R$ 138.900" data-date="jan/25"/>
+                <circle cx="320" cy="115" r="4" fill="#ba39af" data-value="R$ 143.200" data-date="fev/25"/>
+                <circle cx="350" cy="100" r="4" fill="#ba39af" data-value="R$ 149.800" data-date="mar/25"/>
+                <circle cx="380" cy="85" r="4" fill="#ba39af" data-value="R$ 154.100" data-date="abr/25"/>
+                <circle cx="410" cy="70" r="4" fill="#ba39af" data-value="R$ 161.300" data-date="mai/25"/>
+                <circle cx="430" cy="50" r="4" fill="#ba39af" data-value="R$ 168.750" data-date="jun/25"/>
+              </g>
+            </svg>
+            
+            <!-- Tooltip dinâmico -->
+            <div class="chart-tooltip" id="chartTooltip"></div>
+          </div>
+          
+          <!-- Text Content -->
+          <div class="chart-text">
+            <h3 class="text-3xl font-medium text-white mb-6">
+              Estratégias <span class="text-geminii-purple font-semibold">automatizadas</span>
+            </h3>
+            
+            <div class="space-y-4 text-neutral-300 leading-relaxed">
+              <p>
+                Nossos algoritmos trabalham 24/7 analisando padrões, identificando 
+                oportunidades e executando operações baseadas em dados reais do mercado.
+              </p>
+              
+              <p>
+                Backtest completo, análise de risco automática e notificações inteligentes. 
+                Deixe a tecnologia fazer o trabalho pesado enquanto você foca nos resultados.
+              </p>
+            </div>
+            
+            <button id="backtestBtn" class="glow-button mt-8 px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300 transform hover:scale-105 relative overflow-hidden">
+              Ativar Robôs
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="relative z-10 bg-black bg-opacity-60 backdrop-blur-md border-t border-white border-opacity-10">
+      <div class="max-w-6xl mx-auto px-6 py-16">
+        <!-- Newsletter Section -->
+        <div class="text-center mb-12">
+          <h3 class="text-2xl font-medium text-white mb-4">Fique por dentro das oportunidades</h3>
+          <p class="text-neutral-300 mb-6 max-w-2xl mx-auto">
+            Receba análises exclusivas, alertas de mercado e insights sobre as melhores oportunidades na bolsa brasileira.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+            <input 
+              id="newsletterEmail"
+              type="email" 
+              placeholder="Seu melhor e-mail" 
+              class="newsletter-input flex-1 px-4 py-3 bg-white bg-opacity-5 border border-white border-opacity-20 rounded-full text-white placeholder-gray-400 focus:outline-none focus:border-geminii focus:bg-opacity-10 transition-all duration-300"
+            >
+            <button id="newsletterBtn" class="newsletter-btn px-6 py-3 bg-white text-black font-medium rounded-full hover:bg-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl">
+              Inscrever-se
+            </button>
+          </div>
+        </div>
+
+        <!-- Social Media -->
+        <div class="flex justify-center gap-6 mb-12">
+          <a href="#" class="social-icon" title="YouTube">
+            <i class="fab fa-youtube"></i>
+          </a>
+          <a href="#" class="social-icon" title="Instagram">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" class="social-icon" title="LinkedIn">
+            <i class="fab fa-linkedin"></i>
+          </a>
+          <a href="#" class="social-icon" title="Telegram">
+            <i class="fab fa-telegram"></i>
+          </a>
+          <a href="#" class="social-icon" title="X (Twitter)">
+            <i class="fab fa-x-twitter"></i>
+          </a>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+          <div>
+            <h4 class="text-white font-medium mb-4">Produto</h4>
+            <ul class="space-y-2">
+              <li><a href="#" class="footer-link">Indicadores</a></li>
+              <li><a href="#" class="footer-link">Rastreador</a></li>
+              <li><a href="#" class="footer-link">Scanner</a></li>
+              <li><a href="#" class="footer-link">Alertas</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-white font-medium mb-4">Empresa</h4>
+            <ul class="space-y-2">
+              <li><a href="#" class="footer-link">Sobre</a></li>
+              <li><a href="#" class="footer-link">Carreiras</a></li>
+              <li><a href="#" class="footer-link">Blog</a></li>
+              <li><a href="#" class="footer-link">Contato</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-white font-medium mb-4">Recursos</h4>
+            <ul class="space-y-2">
+              <li><a href="#" class="footer-link">Documentação</a></li>
+              <li><a href="#" class="footer-link">API</a></li>
+              <li><a href="#" class="footer-link">Tutoriais</a></li>
+              <li><a href="#" class="footer-link">Suporte</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-white font-medium mb-4">Legal</h4>
+            <ul class="space-y-2">
+              <li><a href="#" class="footer-link">Termos de Uso</a></li>
+              <li><a href="#" class="footer-link">Privacidade</a></li>
+              <li><a href="#" class="footer-link">Cookies</a></li>
+              <li><a href="#" class="footer-link">Compliance</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="text-center pt-8 border-t border-white border-opacity-10">
+          <p class="text-neutral-400 text-sm">
+            © 2025 Todos os direitos reservados à <span class="text-geminii font-medium">Geminii Research</span>
+          </p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- API Status Indicator -->
+    <div id="apiStatusIndicator" class="api-status">
+      <span id="statusText">Verificando conexão...</span>
+    </div>
+  </div>
+
+  <script>
+    // API Configuration
+    const API_BASE_URL = 'http://localhost:5000/api';
+
+    // Utility function to make API calls
+    async function apiCall(endpoint, options = {}) {
+      try {
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+          ...options,
+          headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
+    }
+
+    // Check API status
+    async function checkApiStatus() {
+      const statusIndicator = document.getElementById('apiStatusIndicator');
+      const statusText = document.getElementById('statusText');
+      const apiStatusIcon = document.getElementById('apiStatus');
+
+      try {
+        const response = await apiCall('/status');
+        
+        statusIndicator.className = 'api-status online';
+        statusText.textContent = `✅ API Online - ${response.message}`;
+        
+        // Update nav status icon
+        apiStatusIcon.className = 'w-8 h-8 bg-green-500 bg-opacity-10 border border-green-500 border-opacity-30 rounded-full flex items-center justify-center relative';
+        
+      } catch (error) {
+        statusIndicator.className = 'api-status offline';
+        statusText.textContent = '❌ API Offline - Reconectando...';
+        
+        // Update nav status icon to red
+        apiStatusIcon.className = 'w-8 h-8 bg-red-500 bg-opacity-10 border border-red-500 border-opacity-30 rounded-full flex items-center justify-center relative';
+      }
+    }
+
+    // Newsletter subscription with API
+    async function subscribeNewsletter() {
+      const emailInput = document.getElementById('newsletterEmail');
+      const newsletterBtn = document.getElementById('newsletterBtn');
+      const email = emailInput.value.trim();
+
+      if (!email || !email.includes('@')) {
+        alert('❌ Por favor, insira um e-mail válido.');
+        return;
+      }
+
+      // Add loading state
+      newsletterBtn.classList.add('loading');
+      newsletterBtn.innerHTML = 'Inscrevendo... <div class="spinner"></div>';
+
+      try {
+        const response = await apiCall('/newsletter', {
+          method: 'POST',
+          body: JSON.stringify({ email })
+        });
+
+        if (response.success) {
+          alert(`✅ ${response.message}\n\nEmail: ${response.email}\n\nVocê receberá nossas análises exclusivas em breve!`);
+          emailInput.value = '';
+        }
+      } catch (error) {
+        alert('❌ Erro ao inscrever na newsletter. Tente novamente.');
+        console.error('Newsletter error:', error);
+      } finally {
+        // Remove loading state
+        newsletterBtn.classList.remove('loading');
+        newsletterBtn.innerHTML = 'Inscrever-se';
+      }
+    }
+
+    // Backtest simulation with API
+    async function runBacktest() {
+      const backtestBtn = document.getElementById('backtestBtn');
+      
+      // Add loading state
+      backtestBtn.classList.add('loading');
+      backtestBtn.innerHTML = 'Ativando Robôs... <div class="spinner"></div>';
+
+      try {
+        const response = await apiCall('/backtest', {
+          method: 'POST',
+          body: JSON.stringify({ 
+            strategy: 'momentum_strategy',
+            period: '12_months'
+          })
+        });
+
+        // Show backtest results
+        const resultMessage = `
+🤖 Robôs Ativados com Sucesso!
+
+📊 Estratégia: ${response.strategy}
+💰 Capital Inicial: R$ ${response.initial_capital.toLocaleString('pt-BR')}
+🚀 Capital Final: R$ ${response.final_capital.toLocaleString('pt-BR')}
+📈 Retorno: ${response.return_percent}%
+🎲 Trades: ${response.trades}
+✅ Taxa de Acerto: ${response.win_rate}%
+📊 Sharpe Ratio: ${response.sharpe_ratio}
+
+🤖 Algoritmos trabalhando 24/7!
+        `;
+        alert(resultMessage);
+
+      } catch (error) {
+        alert('❌ Erro ao ativar robôs. Tente novamente.');
+        console.error('Backtest error:', error);
+      } finally {
+        // Remove loading state
+        backtestBtn.classList.remove('loading');
+        backtestBtn.innerHTML = 'Ativar Robôs';
+      }
+    }
+
+    // Get market data
+    async function loadMarketData() {
+      try {
+        const data = await apiCall('/market-data');
+        console.log('📊 Dados do mercado carregados:', data);
+        
+        // You can update the UI with real market data here
+        // For example, update the chart or display market indicators
+        
+      } catch (error) {
+        console.error('Market data error:', error);
+      }
+    }
+
+    // Stock analysis
+    async function getStockAnalysis(symbol) {
+      try {
+        const analysis = await apiCall(`/analysis/${symbol}`);
+        
+        const analysisMessage = `
+📈 Análise: ${analysis.symbol}
+
+💰 Preço Atual: R$ ${analysis.current_price}
+🎯 Recomendação: ${analysis.recommendation}
+🚀 Preço Alvo: R$ ${analysis.target_price}
+
+📊 Indicadores:
+• RSI: ${analysis.indicators.rsi}
+• MACD: ${analysis.indicators.macd}
+• Média 20: R$ ${analysis.indicators.moving_average_20}
+• Média 50: R$ ${analysis.indicators.moving_average_50}
+
+📅 Análise de: ${new Date(analysis.analysis_date).toLocaleDateString('pt-BR')}
+        `;
+        
+        alert(analysisMessage);
+        
+      } catch (error) {
+        alert('❌ Erro ao carregar análise. Tente novamente.');
+        console.error('Stock analysis error:', error);
+      }
+    }
+
+    // Initialize app
+    function initApp() {
+      console.log('🚀 Inicializando Geminii Frontend...');
+      
+      // Check API status immediately and then every 30 seconds
+      checkApiStatus();
+      setInterval(checkApiStatus, 30000);
+      
+      // Load initial market data
+      loadMarketData();
+      
+      console.log('✅ Frontend conectado com o backend!');
+    }
+
+    // DROPDOWN FUNCTIONALITY
+    document.addEventListener('DOMContentLoaded', function() {
+      initApp();
+
+      const dropdowns = document.querySelectorAll('.dropdown');
+      
+      dropdowns.forEach(dropdown => {
+        const toggle = dropdown.querySelector('.dropdown-toggle');
+        
+        toggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const isActive = dropdown.classList.contains('active');
+          
+          dropdowns.forEach(d => d.classList.remove('active'));
+          
+          if (!isActive) {
+            dropdown.classList.add('active');
+          }
+        });
+        
+        dropdown.addEventListener('mouseleave', function() {
+          dropdown.classList.remove('active');
+        });
+      });
+      
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+          dropdowns.forEach(dropdown => {
+            dropdown.classList.remove('active');
+          });
+        }
+      });
+    });
+
+    // GRÁFICO INTERATIVO COM TOOLTIP
+    document.addEventListener('DOMContentLoaded', function() {
+      const chartPoints = document.querySelectorAll('.chart-points circle');
+      const tooltip = document.getElementById('chartTooltip');
+      const chartContainer = document.querySelector('.chart-container');
+      
+      chartPoints.forEach(point => {
+        // Mouse enter - mostrar tooltip
+        point.addEventListener('mouseenter', function(e) {
+          const value = this.getAttribute('data-value');
+          const date = this.getAttribute('data-date');
+          const rect = chartContainer.getBoundingClientRect();
+          const pointRect = this.getBoundingClientRect();
+          
+          tooltip.innerHTML = `<strong>${value}</strong><br><span style="color: #ba39af; font-size: 11px;">${date}</span>`;
+          tooltip.style.left = (pointRect.left - rect.left - 30) + 'px';
+          tooltip.style.top = (pointRect.top - rect.top - 50) + 'px';
+          tooltip.classList.add('show');
+          
+          // Efeito visual no ponto
+          this.style.transform = 'scale(1.5)';
+          this.style.filter = 'drop-shadow(0 0 15px #ba39af)';
+        });
+        
+        // Mouse leave - esconder tooltip
+        point.addEventListener('mouseleave', function() {
+          tooltip.classList.remove('show');
+          this.style.transform = 'scale(1)';
+          this.style.filter = 'drop-shadow(0 0 6px #ba39af)';
+        });
+        
+        // Click no ponto - ação especial
+        point.addEventListener('click', function() {
+          const value = this.getAttribute('data-value');
+          const date = this.getAttribute('data-date');
+          
+          // Efeito de ripple
+          this.style.animation = 'none';
+          setTimeout(() => {
+            this.style.animation = 'popInPoints 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+          }, 10);
+          
+          console.log(`Ponto clicado: ${date} - ${value}`);
+        });
+      });
+      
+      // Animação no hover do container do gráfico
+      chartContainer.addEventListener('mouseenter', function() {
+        // Adiciona brilho extra na linha
+        const chartLine = document.querySelector('.chart-line');
+        chartLine.style.filter = 'drop-shadow(0 0 12px #ba39af)';
+        
+        // Mostra todos os pontos
+        chartPoints.forEach(point => {
+          point.style.opacity = '1';
+        });
+      });
+      
+      chartContainer.addEventListener('mouseleave', function() {
+        // Remove brilho extra
+        const chartLine = document.querySelector('.chart-line');
+        chartLine.style.filter = 'drop-shadow(0 0 8px #ba39af)';
+        
+        // Esconde tooltip se estiver visível
+        tooltip.classList.remove('show');
+        
+        // Reset dos pontos
+        chartPoints.forEach(point => {
+          point.style.transform = 'scale(1)';
+          point.style.filter = 'drop-shadow(0 0 6px #ba39af)';
+        });
+      });
+    });
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      // Newsletter subscription
+      document.getElementById('newsletterBtn').addEventListener('click', subscribeNewsletter);
+      
+      // Enter key for newsletter
+      document.getElementById('newsletterEmail').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          subscribeNewsletter();
+        }
+      });
+
+      // Backtest button
+      document.getElementById('backtestBtn').addEventListener('click', runBacktest);
+
+      // Menu interactions
+      document.querySelectorAll('nav a:not(.dropdown-toggle)').forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (this.getAttribute('href') === '#') {
+            e.preventDefault();
+            console.log('Navegando para:', this.textContent);
+          }
+        });
+      });
+
+      // Security badge click with API status
+      document.getElementById('apiStatus').addEventListener('click', function() {
+        checkApiStatus();
+        alert('🔒 Status da Conexão\n\n✅ SSL Ativo\n✅ Dados Protegidos\n✅ API Monitorada\n\nClique para atualizar status');
+      });
+
+      // Social media clicks
+      document.querySelectorAll('.social-icon').forEach(icon => {
+        icon.addEventListener('click', function(e) {
+          e.preventDefault();
+          const platform = this.getAttribute('title');
+          console.log(`Redirecionando para ${platform}...`);
+        });
+      });
+
+      // Footer links
+      document.querySelectorAll('.footer-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Navegando para:', this.textContent);
+        });
+      });
+
+      // Demo: Stock analysis on double click anywhere
+      document.addEventListener('dblclick', function() {
+        const stocks = ['PETR4', 'VALE3', 'ITUB4', 'BBDC4', 'ABEV3'];
+        const randomStock = stocks[Math.floor(Math.random() * stocks.length)];
+        getStockAnalysis(randomStock);
+      });
+    });
+
+    // Botão "Ativar Robôs" com efeito especial
+    document.addEventListener('DOMContentLoaded', function() {
+      const glowButton = document.querySelector('.glow-button');
+      if (glowButton) {
+        glowButton.addEventListener('click', function(e) {
+          // Efeito de ripple
+          const ripple = document.createElement('span');
+          ripple.style.position = 'absolute';
+          ripple.style.borderRadius = '50%';
+          ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+          ripple.style.transform = 'scale(0)';
+          ripple.style.animation = 'ripple 0.6s linear';
+          ripple.style.left = (e.offsetX - 10) + 'px';
+          ripple.style.top = (e.offsetY - 10) + 'px';
+          ripple.style.width = '20px';
+          ripple.style.height = '20px';
+          
+          this.appendChild(ripple);
+          
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+      }
+    });
+
+    // Expose functions globally for console testing
+    window.geminiiAPI = {
+      checkStatus: checkApiStatus,
+      getMarketData: loadMarketData,
+      analyzeStock: getStockAnalysis,
+      runBacktest: runBacktest
+    };
+
+    // Keyframes para o ripple effect
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+
+    console.log('🎯 Geminii API functions available in window.geminiiAPI');
+    console.log('💡 Try: geminiiAPI.analyzeStock("PETR4")');
+    console.log('💡 Try: geminiiAPI.runBacktest()');
+    console.log('💡 Double-click anywhere for random stock analysis');
+  </script>
+</body>
+</html>

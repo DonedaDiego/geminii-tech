@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geminii Tecnologia - Spotlight Header</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* GEMINII_SPOTLIGHT Container Isolado */
+    .GEMINII_SPOTLIGHT_container {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .GEMINII_SPOTLIGHT_container * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Spotlight Animations */
+    @keyframes GEMINII_SPOTLIGHT_expandWidth {
+      from { 
+        width: 15rem; 
+        opacity: 0.3; 
+      }
+      to { 
+        width: clamp(20rem, 40vw, 35rem); 
+        opacity: 1; 
+      }
+    }
+    
+    @keyframes GEMINII_SPOTLIGHT_moveUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(50px) scale(0.9); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1); 
+      }
+    }
+    
+    @keyframes GEMINII_SPOTLIGHT_expandSmallWidth {
+      from { 
+        width: 8rem; 
+        opacity: 0.6;
+      }
+      to { 
+        width: clamp(12rem, 25vw, 20rem); 
+        opacity: 1;
+      }
+    }
+
+    @keyframes GEMINII_SPOTLIGHT_pulse {
+      0%, 100% { 
+        opacity: 0.8; 
+        transform: scale(1); 
+      }
+      50% { 
+        opacity: 1; 
+        transform: scale(1.05); 
+      }
+    }
+
+    @keyframes GEMINII_SPOTLIGHT_shimmer {
+      0% { 
+        left: -100%; 
+      }
+      100% { 
+        left: 100%; 
+      }
+    }
+    
+    .GEMINII_SPOTLIGHT_animate_width {
+      animation: GEMINII_SPOTLIGHT_expandWidth 1.2s ease-out 0.5s forwards;
+    }
+    
+    .GEMINII_SPOTLIGHT_animate_up {
+      animation: GEMINII_SPOTLIGHT_moveUp 1s ease-out 1.2s forwards;
+    }
+    
+    .GEMINII_SPOTLIGHT_animate_small_width {
+      animation: GEMINII_SPOTLIGHT_expandSmallWidth 1s ease-out 0.7s forwards;
+    }
+    
+    /* Geminii Color Gradients */
+    .GEMINII_SPOTLIGHT_conic_left {
+      background-image: conic-gradient(from 70deg at center top, 
+        #ba39af 0%, 
+        #d946ef 15%, 
+        #ba39af 30%, 
+        transparent 50%, 
+        transparent 100%);
+    }
+    
+    .GEMINII_SPOTLIGHT_conic_right {
+      background-image: conic-gradient(from 290deg at center top, 
+        transparent 0%, 
+        transparent 50%, 
+        #ba39af 70%, 
+        #d946ef 85%, 
+        #ba39af 100%);
+    }
+
+    /* Header Navbar Styling */
+    .GEMINII_SPOTLIGHT_navbar {
+      background: rgba(186, 57, 175, 0.08);
+      backdrop-filter: blur(20px) brightness(0.9);
+      -webkit-backdrop-filter: blur(20px) brightness(0.9);
+      border: 1px solid rgba(186, 57, 175, 0.3);
+      border-radius: 24px;
+      padding: clamp(12px, 2vw, 20px);
+      box-shadow: 
+        0 25px 50px -12px rgba(186, 57, 175, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+      max-width: clamp(300px, 90vw, 1000px);
+      width: 100%;
+    }
+
+    /* Glassmorphism Shimmer Effect */
+    .GEMINII_SPOTLIGHT_navbar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(186, 57, 175, 0.15), transparent);
+      animation: GEMINII_SPOTLIGHT_shimmer 2s ease 2s;
+    }
+
+    .GEMINII_SPOTLIGHT_nav_content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+      flex-wrap: wrap;
+      gap: clamp(8px, 2vw, 16px);
+    }
+
+    /* Logo Styling */
+    .GEMINII_SPOTLIGHT_logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .GEMINII_SPOTLIGHT_logo:hover {
+      transform: scale(1.05);
+    }
+
+    .GEMINII_SPOTLIGHT_logo_icon {
+      width: clamp(28px, 4vw, 36px);
+      height: clamp(28px, 4vw, 36px);
+      margin-right: clamp(8px, 2vw, 12px);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(186, 57, 175, 0.4);
+    }
+
+    .GEMINII_SPOTLIGHT_logo_icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .GEMINII_SPOTLIGHT_logo_text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(16px, 3vw, 20px);
+      font-weight: 600;
+      background: linear-gradient(45deg, #ba39af, #d946ef);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Menu Desktop */
+    .GEMINII_SPOTLIGHT_menu {
+      display: flex;
+      align-items: center;
+      gap: clamp(12px, 3vw, 24px);
+      list-style: none;
+    }
+
+    .GEMINII_SPOTLIGHT_menu_link {
+      font-size: clamp(12px, 2vw, 14px);
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+      white-space: nowrap;
+    }
+
+    .GEMINII_SPOTLIGHT_menu_link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(45deg, #ba39af, #d946ef);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    .GEMINII_SPOTLIGHT_menu_link:hover,
+    .GEMINII_SPOTLIGHT_menu_link.active {
+      color: #e2e8f0;
+      background: rgba(186, 57, 175, 0.1);
+    }
+
+    .GEMINII_SPOTLIGHT_menu_link:hover::before,
+    .GEMINII_SPOTLIGHT_menu_link.active::before {
+      width: 80%;
+    }
+
+    /* Auth Area */
+    .GEMINII_SPOTLIGHT_auth {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 2vw, 12px);
+    }
+
+    .GEMINII_SPOTLIGHT_security {
+      width: clamp(32px, 5vw, 40px);
+      height: clamp(32px, 5vw, 40px);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .GEMINII_SPOTLIGHT_security::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
+      animation: GEMINII_SPOTLIGHT_pulse 2s ease-in-out infinite;
+    }
+
+    .GEMINII_SPOTLIGHT_security:hover {
+      background: rgba(16, 185, 129, 0.2);
+      transform: scale(1.1);
+    }
+
+    .GEMINII_SPOTLIGHT_security i {
+      color: #10b981;
+      font-size: clamp(12px, 2vw, 16px);
+    }
+
+    .GEMINII_SPOTLIGHT_login_btn {
+      background: linear-gradient(45deg, #ba39af, #d946ef);
+      color: white;
+      border: none;
+      padding: clamp(8px, 2vw, 12px) clamp(12px, 3vw, 20px);
+      border-radius: 20px;
+      font-size: clamp(12px, 2vw, 14px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 8px 25px rgba(186, 57, 175, 0.3);
+      white-space: nowrap;
+    }
+
+    .GEMINII_SPOTLIGHT_login_btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(186, 57, 175, 0.4);
+    }
+
+    /* Mobile Menu Toggle */
+    .GEMINII_SPOTLIGHT_mobile_toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: #e2e8f0;
+      font-size: clamp(16px, 4vw, 20px);
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .GEMINII_SPOTLIGHT_mobile_toggle:hover {
+      background: rgba(186, 57, 175, 0.1);
+    }
+
+    /* Hero Content */
+    .GEMINII_SPOTLIGHT_hero_content {
+      text-align: center;
+      max-width: clamp(300px, 90vw, 800px);
+      margin-top: clamp(20px, 5vw, 40px);
+    }
+
+    .GEMINII_SPOTLIGHT_badge {
+      padding: 6px 16px;
+      font-size: clamp(10px, 2vw, 12px);
+      font-weight: 500;
+      color: #e2e8f0;
+      background: rgba(186, 57, 175, 0.1);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      margin-bottom: clamp(16px, 4vw, 24px);
+      border: 1px solid rgba(186, 57, 175, 0.3);
+      display: inline-block;
+    }
+
+    .GEMINII_SPOTLIGHT_title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(1.5rem, 6vw, 3rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #e2e8f0 0%, #ba39af 50%, #d946ef 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: clamp(12px, 3vw, 20px);
+    }
+
+    .GEMINII_SPOTLIGHT_subtitle {
+      font-size: clamp(0.875rem, 2.5vw, 1.125rem);
+      color: #94a3b8;
+      line-height: 1.6;
+      margin-bottom: clamp(24px, 6vw, 40px);
+    }
+
+    /* CTA Buttons */
+    .GEMINII_SPOTLIGHT_cta_group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(8px, 2vw, 12px);
+      justify-content: center;
+    }
+
+    .GEMINII_SPOTLIGHT_cta_primary {
+      padding: clamp(10px, 2vw, 14px) clamp(16px, 4vw, 28px);
+      background: linear-gradient(45deg, #ba39af, #d946ef);
+      color: white;
+      font-weight: 600;
+      border-radius: 16px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(186, 57, 175, 0.3);
+      font-size: clamp(12px, 2vw, 14px);
+      white-space: nowrap;
+    }
+
+    .GEMINII_SPOTLIGHT_cta_primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(186, 57, 175, 0.4);
+    }
+
+    .GEMINII_SPOTLIGHT_cta_secondary {
+      padding: clamp(10px, 2vw, 14px) clamp(16px, 4vw, 28px);
+      background: rgba(186, 57, 175, 0.1);
+      color: #e2e8f0;
+      font-weight: 500;
+      border-radius: 16px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(186, 57, 175, 0.3);
+      font-size: clamp(12px, 2vw, 14px);
+      white-space: nowrap;
+    }
+
+    .GEMINII_SPOTLIGHT_cta_secondary:hover {
+      background: rgba(186, 57, 175, 0.2);
+      transform: translateY(-1px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .GEMINII_SPOTLIGHT_menu {
+        display: none;
+      }
+      
+      .GEMINII_SPOTLIGHT_mobile_toggle {
+        display: block;
+      }
+
+      .GEMINII_SPOTLIGHT_nav_content {
+        justify-content: space-between;
+      }
+
+      .GEMINII_SPOTLIGHT_cta_group {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .GEMINII_SPOTLIGHT_cta_primary,
+      .GEMINII_SPOTLIGHT_cta_secondary {
+        width: 100%;
+        max-width: 240px;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .GEMINII_SPOTLIGHT_auth {
+        gap: 6px;
+      }
+      
+      .GEMINII_SPOTLIGHT_login_btn span {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="GEMINII_SPOTLIGHT_container">
+    <!-- Main Spotlight Container -->
+    <div class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black w-full">
+      
+      <!-- Spotlight Effect Container -->
+      <div class="relative flex w-full flex-1 scale-y-125 items-center justify-center isolate z-0">
+        
+        <!-- Left lamp gradient -->
+        <div class="absolute inset-auto right-1/2 h-56 overflow-visible w-[15rem] GEMINII_SPOTLIGHT_conic_left text-white GEMINII_SPOTLIGHT_animate_width">
+          <div class="absolute w-[100%] left-0 bg-black h-40 bottom-0 z-20 [mask-image:linear-gradient(to_top,white,transparent)]"></div>
+          <div class="absolute w-40 h-[100%] left-0 bg-black bottom-0 z-20 [mask-image:linear-gradient(to_right,white,transparent)]"></div>
+        </div>
+        
+        <!-- Right lamp gradient -->
+        <div class="absolute inset-auto left-1/2 h-56 w-[15rem] GEMINII_SPOTLIGHT_conic_right text-white GEMINII_SPOTLIGHT_animate_width">
+          <div class="absolute w-40 h-[100%] right-0 bg-black bottom-0 z-20 [mask-image:linear-gradient(to_left,white,transparent)]"></div>
+          <div class="absolute w-[100%] right-0 bg-black h-40 bottom-0 z-20 [mask-image:linear-gradient(to_top,white,transparent)]"></div>
+        </div>
+        
+        <!-- Shadow and glow effects -->
+        <div class="absolute top-1/2 h-48 w-full translate-y-12 scale-x-150 bg-black blur-2xl"></div>
+        <div class="absolute top-1/2 z-50 h-48 w-full bg-transparent opacity-10 backdrop-blur-md"></div>
+        <div class="absolute inset-auto z-50 h-36 w-[28rem] -translate-y-1/2 rounded-full bg-purple-600 opacity-30 blur-3xl"></div>
+        
+        <!-- Center glow with Geminii colors -->
+        <div class="absolute inset-auto z-30 h-36 w-[8rem] -translate-y-[6rem] rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 blur-2xl GEMINII_SPOTLIGHT_animate_small_width" style="background: linear-gradient(45deg, #ba39af, #d946ef);"></div>
+        
+        <!-- Lamp line with Geminii color -->
+        <div class="absolute inset-auto z-50 h-0.5 w-[15rem] -translate-y-[7rem] GEMINII_SPOTLIGHT_animate_width" style="background: linear-gradient(90deg, transparent, #ba39af, #d946ef, #ba39af, transparent);"></div>
+        
+        <!-- Top cover -->
+        <div class="absolute inset-auto z-40 h-44 w-full -translate-y-[12.5rem] bg-black"></div>
+      </div>
+      
+      <!-- Header Content in Spotlight -->
+      <div class="relative z-50 flex -translate-y-80 flex-col items-center px-5 opacity-0 GEMINII_SPOTLIGHT_animate_up">
+        
+        <!-- Navigation Bar -->
+        <nav class="GEMINII_SPOTLIGHT_navbar">
+          <div class="GEMINII_SPOTLIGHT_nav_content">
+            <!-- Logo -->
+            <a href="#home" class="GEMINII_SPOTLIGHT_logo">
+              <div class="GEMINII_SPOTLIGHT_logo_icon">
+                <img src="https://app.geminii.com.br/wp-content/uploads/2025/06/logo.png" alt="Geminii Logo">
+              </div>
+              <span class="GEMINII_SPOTLIGHT_logo_text">Geminii</span>
+            </a>
+
+            <!-- Menu Desktop -->
+            <ul class="GEMINII_SPOTLIGHT_menu">
+              <li><a href="#home" class="GEMINII_SPOTLIGHT_menu_link active">Home</a></li>
+              <li><a href="#opcoes" class="GEMINII_SPOTLIGHT_menu_link">Opções</a></li>
+              <li><a href="#acoes" class="GEMINII_SPOTLIGHT_menu_link">Ações</a></li>
+              <li><a href="#analises" class="GEMINII_SPOTLIGHT_menu_link">Análises</a></li>
+              <li><a href="#contato" class="GEMINII_SPOTLIGHT_menu_link">Contato</a></li>
+            </ul>
+
+            <!-- Auth Area -->
+            <div class="GEMINII_SPOTLIGHT_auth">
+              <div class="GEMINII_SPOTLIGHT_security" title="Conexão Segura - SSL Ativo">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <a href="#login" class="GEMINII_SPOTLIGHT_login_btn">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Login</span>
+              </a>
+            </div>
+
+            <!-- Mobile Toggle -->
+            <button class="GEMINII_SPOTLIGHT_mobile_toggle" id="GEMINII_SPOTLIGHT_mobile_toggle">
+              <i class="fas fa-bars"></i>
+            </button>
+          </div>
+        </nav>
+        
+        <!-- Hero Content -->
+        <div class="GEMINII_SPOTLIGHT_hero_content">
+          <span class="GEMINII_SPOTLIGHT_badge">Tecnologia Financeira</span>
+          
+          <h1 class="GEMINII_SPOTLIGHT_title">
+            Inteligência para seus investimentos
+          </h1>
+          
+          <p class="GEMINII_SPOTLIGHT_subtitle">
+            Indicadores avançados, rastreadores em tempo real e análises preditivas para maximizar seus resultados no mercado de ações brasileiro.
+          </p>
+          
+          <div class="GEMINII_SPOTLIGHT_cta_group">
+            <a href="#servicos" class="GEMINII_SPOTLIGHT_cta_primary">
+              Explorar Ferramentas
+            </a>
+            <a href="#contato" class="GEMINII_SPOTLIGHT_cta_secondary">
+              Começar Agora
+            </a>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // GEMINII_SPOTLIGHT JavaScript Functions
+    const GEMINII_SPOTLIGHT_mobileToggle = document.getElementById('GEMINII_SPOTLIGHT_mobile_toggle');
+    const GEMINII_SPOTLIGHT_menuLinks = document.querySelectorAll('.GEMINII_SPOTLIGHT_menu_link');
+
+    // Mobile Menu Toggle (simplified for this layout)
+    GEMINII_SPOTLIGHT_mobileToggle.addEventListener('click', function() {
+      // For this layout, we'll show menu items in a different way
+      const menu = document.querySelector('.GEMINII_SPOTLIGHT_menu');
+      
+      if (window.innerWidth <= 768) {
+        alert('Menu mobile em desenvolvimento. Use a versão desktop para melhor experiência.');
+      }
+    });
+
+    // Active Menu Management
+    GEMINII_SPOTLIGHT_menuLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Remove active from all links
+        GEMINII_SPOTLIGHT_menuLinks.forEach(l => l.classList.remove('active'));
+        
+        // Add active to clicked link
+        this.classList.add('active');
+        
+        // Log navigation
+        const href = this.getAttribute('href');
+        console.log('Navegando para:', href);
+      });
+    });
+
+    // Security Badge Click Handler
+    document.querySelector('.GEMINII_SPOTLIGHT_security').addEventListener('click', function() {
+      // Add click animation
+      this.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        this.style.transform = '';
+      }, 150);
+      
+      // Show security info
+      alert('🔒 Conexão Segura\n\n✅ Certificado SSL Ativo\n✅ Criptografia 256-bit\n✅ Dados Protegidos\n✅ Firewall Avançado\n\nSua navegação está totalmente segura!');
+    });
+
+    // Login Button Handler
+    document.querySelector('.GEMINII_SPOTLIGHT_login_btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Add click animation
+      this.style.transform = 'translateY(-1px) scale(0.98)';
+      setTimeout(() => {
+        this.style.transform = '';
+      }, 150);
+      
+      console.log('Redirecionando para página de login...');
+    });
+
+    // Logo click handler
+    document.querySelector('.GEMINII_SPOTLIGHT_logo').addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Animate logo
+      const logoIcon = this.querySelector('.GEMINII_SPOTLIGHT_logo_icon');
+      const logoText = this.querySelector('.GEMINII_SPOTLIGHT_logo_text');
+      
+      logoIcon.style.transform = 'rotate(360deg) scale(1.2)';
+      logoIcon.style.transition = 'transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+      
+      logoText.style.transform = 'scale(1.1)';
+      logoText.style.transition = 'transform 0.3s ease';
+      
+      setTimeout(() => {
+        logoIcon.style.transform = '';
+        logoText.style.transform = '';
+      }, 800);
+    });
+
+    // CTA Buttons Enhanced Interaction
+    document.querySelectorAll('.GEMINII_SPOTLIGHT_cta_primary, .GEMINII_SPOTLIGHT_cta_secondary').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Create ripple effect
+        const ripple = document.createElement('div');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.6);
+          transform: scale(0);
+          animation: GEMINII_SPOTLIGHT_ripple 0.6s linear;
+          left: ${x}px;
+          top: ${y}px;
+          width: ${size}px;
+          height: ${size}px;
+          pointer-events: none;
+        `;
+        
+        this.style.position = 'relative';
+        this.style.overflow = 'hidden';
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+        
+        // Log action
+        const href = this.getAttribute('href');
+        console.log('CTA clicado:', href);
+      });
+    });
+
+    // Add ripple animation keyframes
+    const GEMINII_SPOTLIGHT_style = document.createElement('style');
+    GEMINII_SPOTLIGHT_style.textContent = `
+      @keyframes GEMINII_SPOTLIGHT_ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(GEMINII_SPOTLIGHT_style);
+
+    // Enhanced hover effects for spotlight elements
+    document.addEventListener('mousemove', (e) => {
+      const spotlights = document.querySelectorAll('.GEMINII_SPOTLIGHT_conic_left, .GEMINII_SPOTLIGHT_conic_right');
+      const mouseX = e.clientX / window.innerWidth;
+      const mouseY = e.clientY / window.innerHeight;
+      
+      spotlights.forEach((spotlight, index) => {
+        const intensity = 0.5 + (mouseY * 0.3);
+        const isLeft = index === 0;
+        
+        if (isLeft) {
+          spotlight.style.opacity = intensity;
+          spotlight.style.filter = `brightness(${0.8 + mouseX * 0.4})`;
+        } else {
+          spotlight.style.opacity = intensity;
+          spotlight.style.filter = `brightness(${0.8 + (1 - mouseX) * 0.4})`;
+        }
+      });
+    });
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🎭 Geminii Spotlight Header Carregado!');
+      
+      // Add some extra sparkle effects
+      setTimeout(() => {
+        const navbar = document.querySelector('.GEMINII_SPOTLIGHT_navbar');
+        if (navbar) {
+          navbar.style.boxShadow = `
+            0 25px 50px -12px rgba(186, 57, 175, 0.6),
+            0 0 0 1px rgba(255, 255, 255, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1)
+          `;
+        }
+      }, 2000);
+      
+      // Progressive enhancement for supported browsers
+      if (CSS.supports('backdrop-filter', 'blur(20px)')) {
+        console.log('✨ Backdrop filter suportado - Efeitos premium ativados!');
+      }
+      
+      // Accessibility improvements
+      const interactiveElements = document.querySelectorAll('a, button');
+      interactiveElements.forEach(el => {
+        el.addEventListener('focus', function() {
+          this.style.outline = '2px solid #ba39af';
+          this.style.outlineOffset = '2px';
+        });
+        
+        el.addEventListener('blur', function() {
+          this.style.outline = '';
+          this.style.outlineOffset = '';
+        });
+      });
+    });
+
+    // Performance optimization - Intersection Observer
+    const GEMINII_SPOTLIGHT_observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+        } else {
+          entry.target.style.animationPlayState = 'paused';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    // Observe animated elements for performance
+    document.querySelectorAll('[class*="animate"], [class*="GEMINII_SPOTLIGHT_animate"]').forEach(el => {
+      GEMINII_SPOTLIGHT_observer.observe(el);
+    });
+
+    // Dynamic spotlight intensity based on time
+    function GEMINII_SPOTLIGHT_updateIntensity() {
+      const hour = new Date().getHours();
+      let intensity = 1;
+      
+      // Dimmer during night hours for better UX
+      if (hour >= 22 || hour <= 6) {
+        intensity = 0.7;
+      } else if (hour >= 19 || hour <= 8) {
+        intensity = 0.85;
+      }
+      
+      const spotlights = document.querySelectorAll('.GEMINII_SPOTLIGHT_conic_left, .GEMINII_SPOTLIGHT_conic_right');
+      spotlights.forEach(spotlight => {
+        spotlight.style.filter = `brightness(${intensity})`;
+      });
+    }
+    
+    // Update intensity on load and every hour
+    GEMINII_SPOTLIGHT_updateIntensity();
+    setInterval(GEMINII_SPOTLIGHT_updateIntensity, 3600000); // 1 hour
+
+    // Smooth scroll enhancement
+    function GEMINII_SPOTLIGHT_smoothScroll(target) {
+      const element = document.querySelector(target);
+      if (element) {
+        element.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+          inline: 'nearest'
+        });
+      }
+    }
+
+    // Keyboard navigation support
+    document.addEventListener('keydown', function(e) {
+      // ESC key to close mobile menu (if implemented)
+      if (e.key === 'Escape') {
+        const mobileMenu = document.querySelector('.GEMINII_SPOTLIGHT_mobile_menu');
+        if (mobileMenu && mobileMenu.classList.contains('active')) {
+          mobileMenu.classList.remove('active');
+        }
+      }
+      
+      // Tab navigation enhancement
+      if (e.key === 'Tab') {
+        const focusableElements = document.querySelectorAll(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        
+        if (e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    });
+
+    // Error handling for missing elements
+    function GEMINII_SPOTLIGHT_safeQuerySelector(selector, callback) {
+      const element = document.querySelector(selector);
+      if (element && typeof callback === 'function') {
+        callback(element);
+      } else if (!element) {
+        console.warn(`Elemento não encontrado: ${selector}`);
+      }
+    }
+
+    // Resize handler for responsive adjustments
+    let GEMINII_SPOTLIGHT_resizeTimeout;
+    window.addEventListener('resize', function() {
+      clearTimeout(GEMINII_SPOTLIGHT_resizeTimeout);
+      GEMINII_SPOTLIGHT_resizeTimeout = setTimeout(() => {
+        // Recalculate spotlight dimensions on resize
+        const spotlights = document.querySelectorAll('.GEMINII_SPOTLIGHT_conic_left, .GEMINII_SPOTLIGHT_conic_right');
+        spotlights.forEach(spotlight => {
+          const width = window.innerWidth;
+          const newWidth = Math.min(Math.max(width * 0.25, 200), 400);
+          spotlight.style.width = `${newWidth}px`;
+        });
+        
+        console.log('📱 Layout responsivo ajustado');
+      }, 250);
+    });
+
+    // Loading state management
+    window.addEventListener('load', function() {
+      // Add loaded class for final animations
+      document.body.classList.add('GEMINII_SPOTLIGHT_loaded');
+      
+      // Final polish animations
+      setTimeout(() => {
+        const allAnimatedElements = document.querySelectorAll('[class*="GEMINII_SPOTLIGHT_animate"]');
+        allAnimatedElements.forEach(el => {
+          el.style.animationFillMode = 'forwards';
+        });
+      }, 100);
+      
+      console.log('🚀 Geminii Spotlight totalmente carregado e otimizado!');
+    });
+
+    // Preload critical resources
+    function GEMINII_SPOTLIGHT_preloadResources() {
+      const criticalResources = [
+        'https://app.geminii.com.br/wp-content/uploads/2025/06/logo.png'
+      ];
+      
+      criticalResources.forEach(src => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = src;
+        document.head.appendChild(link);
+      });
+    }
+    
+    GEMINII_SPOTLIGHT_preloadResources();
+  </script>
+</body>
+</html>

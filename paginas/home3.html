@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Geminii Tecnologia - Inteligência para seus Investimentos</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* GEMINII_HEADER Container Isolado */
+    .GEMINII_HEADER_container {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f0514 0%, #1a0b2e 50%, #2d1b4e 100%);
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+    }
+
+    .GEMINII_HEADER_container * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Background 3D Effect Aprimorado */
+    .GEMINII_HEADER_bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(186, 57, 175, 0.4) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(217, 70, 239, 0.4) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+        linear-gradient(135deg, #0f0514 0%, #1a0b2e 50%, #2d1b4e 100%);
+      animation: GEMINII_HEADER_bg_move 20s ease infinite;
+    }
+
+    @keyframes GEMINII_HEADER_bg_move {
+      0%, 100% { background-position: 0% 50%, 100% 50%, 50% 0%; }
+      50% { background-position: 100% 50%, 0% 50%, 50% 100%; }
+    }
+
+    /* Header Container Aprimorado */
+    .GEMINII_HEADER_navbar {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 50;
+      width: calc(100% - 40px);
+      max-width: 1200px;
+      background: rgba(186, 57, 175, 0.08);
+      backdrop-filter: blur(20px) brightness(0.9);
+      -webkit-backdrop-filter: blur(20px) brightness(0.9);
+      border: 1px solid rgba(186, 57, 175, 0.3);
+      border-radius: 24px;
+      padding: clamp(12px, 2vw, 20px);
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Glassmorphism Shimmer Effect */
+    .GEMINII_HEADER_navbar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(186, 57, 175, 0.1), transparent);
+      transition: left 1s ease;
+    }
+
+    .GEMINII_HEADER_navbar:hover::before {
+      left: 100%;
+    }
+
+    .GEMINII_HEADER_nav_content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Logo Aprimorado */
+    .GEMINII_HEADER_logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .GEMINII_HEADER_logo:hover {
+      transform: scale(1.05);
+    }
+
+    .GEMINII_HEADER_logo_icon {
+      width: clamp(28px, 4vw, 36px);
+      height: clamp(28px, 4vw, 36px);
+      margin-right: clamp(8px, 2vw, 12px);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(186, 57, 175, 0.3);
+    }
+
+    .GEMINII_HEADER_logo_icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .GEMINII_HEADER_logo_text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(16px, 3vw, 20px);
+      font-weight: 600;
+      background: linear-gradient(45deg, #ba39af, #d946ef);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Menu Desktop Aprimorado */
+    .GEMINII_HEADER_menu {
+      display: flex;
+      align-items: center;
+      gap: clamp(20px, 4vw, 32px);
+      list-style: none;
+    }
+
+    .GEMINII_HEADER_menu_link {
+      font-size: clamp(14px, 2vw, 16px);
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .GEMINII_HEADER_menu_link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(45deg, #ba39af, #d946ef);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+
+    .GEMINII_HEADER_menu_link:hover,
+    .GEMINII_HEADER_menu_link.active {
+      color: #e2e8f0;
+      background: rgba(186, 57, 175, 0.1);
+    }
+
+    .GEMINII_HEADER_menu_link:hover::before,
+    .GEMINII_HEADER_menu_link.active::before {
+      width: 80%;
+    }
+
+    /* Auth Area Aprimorada */
+    .GEMINII_HEADER_auth {
+      display: flex;
+      align-items: center;
+      gap: clamp(12px, 2vw, 16px);
+    }
+
+    .GEMINII_HEADER_security {
+      width: clamp(36px, 5vw, 44px);
+      height: clamp(36px, 5vw, 44px);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .GEMINII_HEADER_security::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.8);
+      animation: GEMINII_HEADER_pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes GEMINII_HEADER_pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
+    }
+
+    .GEMINII_HEADER_security:hover {
+      background: rgba(16, 185, 129, 0.2);
+      transform: scale(1.1);
+    }
+
+    .GEMINII_HEADER_security i {
+      color: #10b981;
+      font-size: clamp(14px, 2vw, 18px);
+    }
+
+    .GEMINII_HEADER_login_btn {
+      background: linear-gradient(45deg, #ba39af, #d946ef);
+      color: white;
+      border: none;
+      padding: clamp(8px, 2vw, 12px) clamp(16px, 3vw, 24px);
+      border-radius: 20px;
+      font-size: clamp(14px, 2vw, 16px);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 25px rgba(186, 57, 175, 0.3);
+    }
+
+    .GEMINII_HEADER_login_btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(186, 57, 175, 0.4);
+    }
+
+    /* Mobile Menu Toggle */
+    .GEMINII_HEADER_mobile_toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: #e2e8f0;
+      font-size: clamp(18px, 4vw, 22px);
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .GEMINII_HEADER_mobile_toggle:hover {
+      background: rgba(186, 57, 175, 0.1);
+    }
+
+    /* Mobile Menu */
+    .GEMINII_HEADER_mobile_menu {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-width: 1200px;
+      background: rgba(186, 57, 175, 0.08);
+      backdrop-filter: blur(20px) brightness(0.9);
+      -webkit-backdrop-filter: blur(20px) brightness(0.9);
+      border: 1px solid rgba(186, 57, 175, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      z-index: 45;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .GEMINII_HEADER_mobile_menu.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .GEMINII_HEADER_mobile_menu_list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .GEMINII_HEADER_mobile_menu_link {
+      color: #94a3b8;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 12px 16px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      display: block;
+    }
+
+    .GEMINII_HEADER_mobile_menu_link:hover,
+    .GEMINII_HEADER_mobile_menu_link.active {
+      color: #e2e8f0;
+      background: rgba(186, 57, 175, 0.1);
+    }
+
+    /* Hero Section Aprimorada */
+    .GEMINII_HEADER_hero {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(100px, 15vh, 140px) clamp(20px, 5vw, 40px) clamp(60px, 10vh, 100px);
+      text-align: center;
+      min-height: 100vh;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .GEMINII_HEADER_hero_glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: clamp(400px, 50vw, 800px);
+      height: clamp(400px, 50vw, 800px);
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(186, 57, 175, 0.1) 0%, transparent 70%);
+      filter: blur(80px);
+      pointer-events: none;
+    }
+
+    .GEMINII_HEADER_badge {
+      padding: 8px 20px;
+      font-size: clamp(12px, 2vw, 14px);
+      font-weight: 500;
+      color: #e2e8f0;
+      background: rgba(186, 57, 175, 0.1);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      margin-bottom: clamp(24px, 5vw, 40px);
+      border: 1px solid rgba(186, 57, 175, 0.3);
+    }
+
+    .GEMINII_HEADER_title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2rem, 8vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #e2e8f0;
+      max-width: 900px;
+      margin-bottom: clamp(20px, 4vw, 32px);
+    }
+
+    .GEMINII_HEADER_subtitle {
+      font-size: clamp(1rem, 3vw, 1.25rem);
+      color: #94a3b8;
+      max-width: 600px;
+      margin-bottom: clamp(40px, 8vw, 60px);
+      line-height: 1.6;
+    }
+
+    /* CTA Buttons Aprimorados */
+    .GEMINII_HEADER_cta_group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+      margin-bottom: clamp(60px, 12vw, 100px);
+    }
+
+    .GEMINII_HEADER_cta_primary {
+      padding: clamp(12px, 2vw, 16px) clamp(24px, 4vw, 40px);
+      background: linear-gradient(45deg, #ba39af, #d946ef);
+      color: white;
+      font-weight: 600;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(186, 57, 175, 0.3);
+      font-size: clamp(14px, 2vw, 16px);
+    }
+
+    .GEMINII_HEADER_cta_primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(186, 57, 175, 0.4);
+    }
+
+    .GEMINII_HEADER_cta_secondary {
+      padding: clamp(12px, 2vw, 16px) clamp(24px, 4vw, 40px);
+      background: rgba(186, 57, 175, 0.1);
+      color: #e2e8f0;
+      font-weight: 500;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(186, 57, 175, 0.3);
+      font-size: clamp(14px, 2vw, 16px);
+    }
+
+    .GEMINII_HEADER_cta_secondary:hover {
+      background: rgba(186, 57, 175, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* App Preview Aprimorado */
+    .GEMINII_HEADER_preview {
+      width: 100%;
+      max-width: 900px;
+      height: clamp(300px, 40vw, 500px);
+      background: rgba(15, 5, 20, 0.6);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(186, 57, 175, 0.2);
+      border: 1px solid rgba(186, 57, 175, 0.2);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .GEMINII_HEADER_preview:hover {
+      transform: translateY(-5px);
+      box-shadow: 
+        0 35px 60px -12px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(186, 57, 175, 0.3);
+    }
+
+    .GEMINII_HEADER_preview_header {
+      height: 40px;
+      border-bottom: 1px solid rgba(186, 57, 175, 0.2);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      background: rgba(26, 11, 46, 0.3);
+    }
+
+    .GEMINII_HEADER_preview_dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .GEMINII_HEADER_preview_dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(148, 163, 184, 0.4);
+    }
+
+    .GEMINII_HEADER_preview_dot:first-child {
+      background: rgba(239, 68, 68, 0.6);
+    }
+
+    .GEMINII_HEADER_preview_dot:nth-child(2) {
+      background: rgba(245, 158, 11, 0.6);
+    }
+
+    .GEMINII_HEADER_preview_dot:nth-child(3) {
+      background: rgba(16, 185, 129, 0.6);
+    }
+
+    .GEMINII_HEADER_preview_content {
+      padding: 20px;
+      height: calc(100% - 40px);
+      display: flex;
+      gap: 20px;
+    }
+
+    .GEMINII_HEADER_sidebar {
+      width: clamp(150px, 25%, 220px);
+      background: rgba(186, 57, 175, 0.05);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid rgba(186, 57, 175, 0.1);
+    }
+
+    .GEMINII_HEADER_main_area {
+      flex: 1;
+      background: rgba(186, 57, 175, 0.05);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid rgba(186, 57, 175, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .GEMINII_HEADER_chart_placeholder {
+      width: clamp(100px, 15vw, 160px);
+      height: clamp(100px, 15vw, 160px);
+      border: 2px solid rgba(186, 57, 175, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: GEMINII_HEADER_chart_spin 8s linear infinite;
+    }
+
+    @keyframes GEMINII_HEADER_chart_spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .GEMINII_HEADER_chart_inner {
+      width: 60%;
+      height: 60%;
+      background: linear-gradient(45deg, rgba(186, 57, 175, 0.4), rgba(217, 70, 239, 0.4));
+      border-radius: 50%;
+    }
+
+    /* Responsividade Aprimorada */
+    @media (max-width: 768px) {
+      .GEMINII_HEADER_menu {
+        display: none;
+      }
+      
+      .GEMINII_HEADER_mobile_toggle {
+        display: block;
+      }
+      
+      .GEMINII_HEADER_navbar {
+        top: 10px;
+        width: calc(100% - 20px);
+      }
+      
+      .GEMINII_HEADER_preview_content {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .GEMINII_HEADER_sidebar {
+        width: 100%;
+        height: 60px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .GEMINII_HEADER_cta_group {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .GEMINII_HEADER_cta_primary,
+      .GEMINII_HEADER_cta_secondary {
+        width: 100%;
+        max-width: 280px;
+        text-align: center;
+      }
+    }
+
+    /* Loading States */
+    .GEMINII_HEADER_loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+      color: #ba39af;
+      font-weight: 600;
+    }
+
+    .GEMINII_HEADER_loading::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(186, 57, 175, 0.3);
+      border-top: 2px solid #ba39af;
+      border-radius: 50%;
+      margin-right: 15px;
+      animation: GEMINII_HEADER_spin 1s linear infinite;
+    }
+
+    @keyframes GEMINII_HEADER_spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="GEMINII_HEADER_container">
+    <!-- Background 3D Effect -->
+    <div class="GEMINII_HEADER_bg"></div>
+    
+    <!-- Header Aprimorado -->
+    <nav class="GEMINII_HEADER_navbar">
+      <div class="GEMINII_HEADER_nav_content">
+        <!-- Logo -->
+        <a href="#home" class="GEMINII_HEADER_logo">
+          <div class="GEMINII_HEADER_logo_icon">
+            <img src="https://app.geminii.com.br/wp-content/uploads/2025/06/logo.png" alt="Geminii Logo">
+          </div>
+          <span class="GEMINII_HEADER_logo_text">Geminii</span>
+        </a>
+
+        <!-- Menu Desktop -->
+        <ul class="GEMINII_HEADER_menu">
+          <li><a href="#home" class="GEMINII_HEADER_menu_link active">Home</a></li>
+          <li><a href="#opcoes" class="GEMINII_HEADER_menu_link">Opções</a></li>
+          <li><a href="#acoes" class="GEMINII_HEADER_menu_link">Ações</a></li>
+          <li><a href="#analises" class="GEMINII_HEADER_menu_link">Análises</a></li>
+          <li><a href="#contato" class="GEMINII_HEADER_menu_link">Contato</a></li>
+        </ul>
+
+        <!-- Auth Area -->
+        <div class="GEMINII_HEADER_auth">
+          <div class="GEMINII_HEADER_security" title="Conexão Segura - SSL Ativo">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <a href="#login" class="GEMINII_HEADER_login_btn">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Login</span>
+          </a>
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button class="GEMINII_HEADER_mobile_toggle" id="GEMINII_HEADER_mobile_toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="GEMINII_HEADER_mobile_menu" id="GEMINII_HEADER_mobile_menu">
+      <ul class="GEMINII_HEADER_mobile_menu_list">
+        <li><a href="#home" class="GEMINII_HEADER_mobile_menu_link active">Home</a></li>
+        <li><a href="#opcoes" class="GEMINII_HEADER_mobile_menu_link">Opções</a></li>
+        <li><a href="#acoes" class="GEMINII_HEADER_mobile_menu_link">Ações</a></li>
+        <li><a href="#analises" class="GEMINII_HEADER_mobile_menu_link">Análises</a></li>
+        <li><a href="#contato" class="GEMINII_HEADER_mobile_menu_link">Contato</a></li>
+      </ul>
+    </div>
+    
+    <!-- Hero Section -->
+    <div class="GEMINII_HEADER_hero">
+      <div class="GEMINII_HEADER_hero_glow"></div>
+      
+      <span class="GEMINII_HEADER_badge">Tecnologia Financeira</span>
+      
+      <h1 class="GEMINII_HEADER_title">
+        Inteligência para seus investimentos na bolsa brasileira
+      </h1>
+      
+      <p class="GEMINII_HEADER_subtitle">
+        Indicadores avançados, rastreadores em tempo real e análises preditivas 
+        para maximizar seus resultados no mercado de ações.
+      </p>
+      
+      <div class="GEMINII_HEADER_cta_group">
+        <a href="#servicos" class="GEMINII_HEADER_cta_primary">
+          Explorar Ferramentas
+        </a>
+        <a href="#contato" class="GEMINII_HEADER_cta_secondary">
+          Começar Agora
+        </a>
+      </div>
+      
+      <!-- App Preview Aprimorado -->
+      <div class="GEMINII_HEADER_preview">
+        <div class="GEMINII_HEADER_preview_header">
+          <div class="GEMINII_HEADER_preview_dots">
+            <div class="GEMINII_HEADER_preview_dot"></div>
+            <div class="GEMINII_HEADER_preview_dot"></div>
+            <div class="GEMINII_HEADER_preview_dot"></div>
+          </div>
+        </div>
+        <div class="GEMINII_HEADER_preview_content">
+          <div class="GEMINII_HEADER_sidebar">
+            <div style="width: 100%; height: 16px; background: rgba(186,57,175,0.2); border-radius: 6px; margin-bottom: 12px;"></div>
+            <div style="width: 75%; height: 12px; background: rgba(186,57,175,0.15); border-radius: 4px; margin-bottom: 16px;"></div>
+            <div style="margin-bottom: 8px;">
+              <div style="width: 100%; height: 32px; background: rgba(186,57,175,0.1); border-radius: 6px; margin-bottom: 8px;"></div>
+              <div style="width: 100%; height: 32px; background: rgba(186,57,175,0.1); border-radius: 6px; margin-bottom: 8px;"></div>
+              <div style="width: 100%; height: 32px; background: rgba(186,57,175,0.25); border-radius: 6px;"></div>
+            </div>
+          </div>
+          <div class="GEMINII_HEADER_main_area">
+            <div class="GEMINII_HEADER_chart_placeholder">
+              <div class="GEMINII_HEADER_chart_inner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // GEMINII_HEADER JavaScript Functions
+    const GEMINII_HEADER_mobileToggle = document.getElementById('GEMINII_HEADER_mobile_toggle');
+    const GEMINII_HEADER_mobileMenu = document.getElementById('GEMINII_HEADER_mobile_menu');
+    const GEMINII_HEADER_menuLinks = document.querySelectorAll('.GEMINII_HEADER_menu_link');
+    const GEMINII_HEADER_mobileMenuLinks = document.querySelectorAll('.GEMINII_HEADER_mobile_menu_link');
+
+    // Mobile Menu Toggle
+    GEMINII_HEADER_mobileToggle.addEventListener('click', function() {
+      GEMINII_HEADER_mobileMenu.classList.toggle('active');
+      
+      // Change icon
+      const icon = this.querySelector('i');
+      if (GEMINII_HEADER_mobileMenu.classList.contains('active')) {
+        icon.classList.remove('fa-bars');
+        icon.classList.add('fa-times');
+      } else {
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!GEMINII_HEADER_mobileToggle.contains(event.target) && 
+          !GEMINII_HEADER_mobileMenu.contains(event.target)) {
+        GEMINII_HEADER_mobileMenu.classList.remove('active');
+        const icon = GEMINII_HEADER_mobileToggle.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+      }
+    });
+
+    // Active Menu Management - Desktop
+    GEMINII_HEADER_menuLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Remove active from all links
+        GEMINII_HEADER_menuLinks.forEach(l => l.classList.remove('active'));
+        
+        // Add active to clicked link
+        this.classList.add('active');
+        
+        // Log navigation
+        const href = this.getAttribute('href');
+        console.log('Navegando para:', href);
+        
+        // Smooth scroll effect
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // Active Menu Management - Mobile
+    GEMINII_HEADER_mobileMenuLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Remove active from all mobile links
+        GEMINII_HEADER_mobileMenuLinks.forEach(l => l.classList.remove('active'));
+        
+        // Add active to clicked link
+        this.classList.add('active');
+        
+        // Sync with desktop menu
+        const href = this.getAttribute('href');
+        GEMINII_HEADER_menuLinks.forEach(l => {
+          l.classList.remove('active');
+          if (l.getAttribute('href') === href) {
+            l.classList.add('active');
+          }
+        });
+        
+        // Close mobile menu
+        GEMINII_HEADER_mobileMenu.classList.remove('active');
+        const icon = GEMINII_HEADER_mobileToggle.querySelector('i');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
+        
+        // Log navigation
+        console.log('Navegando para:', href);
+        
+        // Smooth scroll effect
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    // Security Badge Click Handler with Enhanced Animation
+    document.querySelector('.GEMINII_HEADER_security').addEventListener('click', function() {
+      // Add click animation
+      this.style.transform = 'scale(0.95)';
+      setTimeout(() => {
+        this.style.transform = '';
+      }, 150);
+      
+      // Show security info
+      alert('🔒 Conexão Segura\n\n✅ Certificado SSL Ativo\n✅ Criptografia 256-bit\n✅ Dados Protegidos\n✅ Firewall Avançado\n\nSua navegação está totalmente segura!');
+    });
+
+    // Login Button Handler with Animation
+    document.querySelector('.GEMINII_HEADER_login_btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Add click animation
+      this.style.transform = 'translateY(-1px) scale(0.98)';
+      setTimeout(() => {
+        this.style.transform = '';
+      }, 150);
+      
+      console.log('Redirecionando para página de login...');
+    });
+
+    // Logo click handler with enhanced animation
+    document.querySelector('.GEMINII_HEADER_logo').addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // Animate logo with multiple effects
+      const logoIcon = this.querySelector('.GEMINII_HEADER_logo_icon');
+      const logoText = this.querySelector('.GEMINII_HEADER_logo_text');
+      
+      logoIcon.style.transform = 'rotate(360deg) scale(1.2)';
+      logoIcon.style.transition = 'transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+      
+      logoText.style.transform = 'scale(1.1)';
+      logoText.style.transition = 'transform 0.3s ease';
+      
+      setTimeout(() => {
+        logoIcon.style.transform = '';
+        logoText.style.transform = '';
+      }, 800);
+      
+      // Scroll to top
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // Enhanced Parallax effect for hero glow
+    let GEMINII_HEADER_ticking = false;
+    
+    function GEMINII_HEADER_updateParallax() {
+      const scrolled = window.pageYOffset;
+      const glow = document.querySelector('.GEMINII_HEADER_hero_glow');
+      
+      if (glow) {
+        const rate = scrolled * -0.3;
+        glow.style.transform = `translate(-50%, -50%) translateY(${rate}px) scale(${1 + scrolled * 0.0005})`;
+      }
+      
+      GEMINII_HEADER_ticking = false;
+    }
+    
+    window.addEventListener('scroll', () => {
+      if (!GEMINII_HEADER_ticking) {
+        requestAnimationFrame(GEMINII_HEADER_updateParallax);
+        GEMINII_HEADER_ticking = true;
+      }
+    });
+
+    // Enhanced Mouse move effect for hero section
+    let GEMINII_HEADER_mouseX = 0;
+    let GEMINII_HEADER_mouseY = 0;
+    let GEMINII_HEADER_animationId;
+    
+    function GEMINII_HEADER_animateGlow() {
+      const glow = document.querySelector('.GEMINII_HEADER_hero_glow');
+      if (glow) {
+        const targetX = (GEMINII_HEADER_mouseX / window.innerWidth) * 100;
+        const targetY = (GEMINII_HEADER_mouseY / window.innerHeight) * 100;
+        
+        glow.style.background = `radial-gradient(circle at ${targetX}% ${targetY}%, rgba(186, 57, 175, 0.15) 0%, rgba(217, 70, 239, 0.1) 30%, transparent 70%)`;
+      }
+      
+      GEMINII_HEADER_animationId = requestAnimationFrame(GEMINII_HEADER_animateGlow);
+    }
+    
+    document.addEventListener('mousemove', (e) => {
+      GEMINII_HEADER_mouseX = e.clientX;
+      GEMINII_HEADER_mouseY = e.clientY;
+      
+      if (!GEMINII_HEADER_animationId) {
+        GEMINII_HEADER_animateGlow();
+      }
+    });
+
+    // CTA Buttons Enhanced Interaction
+    document.querySelectorAll('.GEMINII_HEADER_cta_primary, .GEMINII_HEADER_cta_secondary').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Create ripple effect
+        const ripple = document.createElement('div');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.cssText = `
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.6);
+          transform: scale(0);
+          animation: GEMINII_HEADER_ripple 0.6s linear;
+          left: ${x}px;
+          top: ${y}px;
+          width: ${size}px;
+          height: ${size}px;
+          pointer-events: none;
+        `;
+        
+        this.style.position = 'relative';
+        this.style.overflow = 'hidden';
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+        
+        // Log action
+        const href = this.getAttribute('href');
+        console.log('CTA clicado:', href);
+      });
+    });
+
+    // Add ripple animation keyframes
+    const GEMINII_HEADER_style = document.createElement('style');
+    GEMINII_HEADER_style.textContent = `
+      @keyframes GEMINII_HEADER_ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(GEMINII_HEADER_style);
+
+    // Navbar scroll effect
+    let GEMINII_HEADER_lastScrollY = window.scrollY;
+    
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.GEMINII_HEADER_navbar');
+      const currentScrollY = window.scrollY;
+      
+      if (currentScrollY > 100) {
+        navbar.style.background = 'rgba(15, 5, 20, 0.9)';
+        navbar.style.backdropFilter = 'blur(25px) brightness(0.8)';
+      } else {
+        navbar.style.background = 'rgba(186, 57, 175, 0.08)';
+        navbar.style.backdropFilter = 'blur(20px) brightness(0.9)';
+      }
+      
+      GEMINII_HEADER_lastScrollY = currentScrollY;
+    });
+
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🚀 Geminii Header Carregado com Sucesso!');
+      
+      // Add loading animation to preview
+      const preview = document.querySelector('.GEMINII_HEADER_preview');
+      if (preview) {
+        preview.style.opacity = '0';
+        preview.style.transform = 'translateY(30px)';
+        
+        setTimeout(() => {
+          preview.style.transition = 'all 0.8s ease';
+          preview.style.opacity = '1';
+          preview.style.transform = 'translateY(0)';
+        }, 500);
+      }
+      
+      // Animate elements on load
+      const elements = document.querySelectorAll('.GEMINII_HEADER_badge, .GEMINII_HEADER_title, .GEMINII_HEADER_subtitle, .GEMINII_HEADER_cta_group');
+      elements.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          el.style.transition = 'all 0.6s ease';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, index * 150);
+      });
+    });
+
+    // Performance optimization - Intersection Observer for animations
+    const GEMINII_HEADER_observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+        } else {
+          entry.target.style.animationPlayState = 'paused';
+        }
+      });
+    });
+
+    // Observe animated elements
+    document.querySelectorAll('[class*="chart"], [class*="pulse"], [class*="spin"]').forEach(el => {
+      GEMINII_HEADER_observer.observe(el);
+    });
+  </script>
+</body>
+</html>
