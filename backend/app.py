@@ -99,12 +99,41 @@ def get_stock_history(symbol, period='3mo'):
         print(f"Erro ao buscar histórico de {symbol}: {e}")
         return None
 
-# Rota principal - servir o HTML - CORRIGIDO
+# Rota principal - servir o HTML - VERSÃO SIMPLIFICADA
 @app.route('/')
 def home():
     try:
-        frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
-        return send_from_directory(frontend_path, 'home.html')
+        # Tentar múltiplos caminhos possíveis
+        possible_paths = [
+            'frontend/home.html',
+            '../frontend/home.html', 
+            './frontend/home.html',
+            'home.html'
+        ]
+        
+        for path in possible_paths:
+            try:
+                if '/' in path:
+                    directory, filename = path.rsplit('/', 1)
+                    return send_from_directory(directory, filename)
+                else:
+                    return send_from_directory('.', path)
+            except:
+                continue
+                
+        # Se nenhum caminho funcionar, retornar HTML direto
+        return '''
+        <!DOCTYPE html>
+        <html>
+        <head><title>Geminii Tech - Loading...</title></head>
+        <body>
+            <h1>🚀 Geminii Tech está carregando...</h1>
+            <p>API funcionando! Página principal em desenvolvimento.</p>
+            <a href="/api/status">Testar API</a>
+        </body>
+        </html>
+        '''
+        
     except Exception as e:
         print(f"Erro ao servir home.html: {e}")
         return jsonify({'error': 'Página não encontrada', 'details': str(e)}), 404
@@ -360,13 +389,15 @@ def internal_error(error):
     return jsonify({'error': 'Erro interno do servidor'}), 500
 
 if __name__ == '__main__':
-    import os
     print("🚀 Iniciando Geminii Backend...")
     print("📊 Servidor rodando")
     print(f"📁 Diretório atual: {os.getcwd()}")
     print(f"📁 Diretório do script: {os.path.dirname(__file__)}")
     print(f"📁 Frontend path: {os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')}")
     
-    # Configuração para Render
-    port = int(os.environ.get('PORT', 5000))
+    # Configuração para Render - seguindo documentação oficial
+    port = int(os.environ.get('PORT', 10000))  # Render usa porta 10000 como padrão
+    print(f"🔗 Rodando na porta: {port}")
+    print(f"🌐 Servidor disponível em: 0.0.0.0:{port}")
+    
     app.run(debug=False, host='0.0.0.0', port=port)
