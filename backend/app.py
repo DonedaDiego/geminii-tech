@@ -345,9 +345,10 @@ def internal_error(error):
     return jsonify({'error': 'Erro interno do servidor'}), 500
 
 if __name__ == '__main__':
+    import os
     print("🚀 Iniciando Geminii Backend...")
-    print("📊 Servidor rodando em: http://localhost:5000")
-    print("🔗 API disponível em: http://localhost:5000/api/")
+    print("📊 Servidor rodando")
     
-    # Rodar em modo debug para desenvolvimento
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Configuração para Railway
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
