@@ -528,4 +528,5 @@ if __name__ == '__main__':
     print(f"🔗 Rodando na porta: {port}")
     print(f"🌐 Servidor disponível em: 0.0.0.0:{port}")
     
+    # pode ser novas atualizações
     app.run(debug=False, host='0.0.0.0', port=port)
