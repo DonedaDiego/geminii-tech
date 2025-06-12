@@ -15,8 +15,9 @@ app = Flask(__name__)
 CORS(app)
 
 # Configurar pasta de templates (onde está o HTML) - CORRIGIDO PARA RENDER
-app.template_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
-app.static_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
+# Render executa app.py de dentro da pasta backend, então frontend está um nível acima
+app.template_folder = os.path.join(os.path.dirname(__file__), '..', 'frontend')
+app.static_folder = os.path.join(os.path.dirname(__file__), '..', 'frontend')
 
 # Lista de ações brasileiras populares
 BRAZILIAN_STOCKS = [
@@ -99,44 +100,39 @@ def get_stock_history(symbol, period='3mo'):
         print(f"Erro ao buscar histórico de {symbol}: {e}")
         return None
 
-# Rota principal - servir o HTML - VERSÃO SIMPLIFICADA
+# Rota principal - servir o HTML - CAMINHO CORRETO PARA RENDER
 @app.route('/')
 def home():
     try:
-        # Tentar múltiplos caminhos possíveis
-        possible_paths = [
-            'frontend/home.html',
-            '../frontend/home.html', 
-            './frontend/home.html',
-            'home.html'
-        ]
-        
-        for path in possible_paths:
-            try:
-                if '/' in path:
-                    directory, filename = path.rsplit('/', 1)
-                    return send_from_directory(directory, filename)
-                else:
-                    return send_from_directory('.', path)
-            except:
-                continue
-                
-        # Se nenhum caminho funcionar, retornar HTML direto
-        return '''
-        <!DOCTYPE html>
-        <html>
-        <head><title>Geminii Tech - Loading...</title></head>
-        <body>
-            <h1>🚀 Geminii Tech está carregando...</h1>
-            <p>API funcionando! Página principal em desenvolvimento.</p>
-            <a href="/api/status">Testar API</a>
-        </body>
-        </html>
-        '''
-        
+        # Caminho correto: backend/../frontend/home.html
+        frontend_path = os.path.join(os.path.dirname(__file__), '..', 'frontend')
+        return send_from_directory(frontend_path, 'home.html')
     except Exception as e:
         print(f"Erro ao servir home.html: {e}")
-        return jsonify({'error': 'Página não encontrada', 'details': str(e)}), 404
+        print(f"Caminho tentado: {os.path.join(os.path.dirname(__file__), '..', 'frontend')}")
+        print(f"Arquivo existe: {os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'frontend', 'home.html'))}")
+        
+        # Fallback: página temporária
+        return '''<!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Geminii Tech - Loading</title>
+            <style>
+                body { font-family: Arial; background: #000; color: #fff; padding: 50px; text-align: center; }
+                .loading { color: #ba39af; font-size: 24px; margin: 20px 0; }
+                .api-link { color: #ba39af; text-decoration: none; padding: 10px 20px; border: 2px solid #ba39af; border-radius: 25px; display: inline-block; margin-top: 20px; }
+                .api-link:hover { background: #ba39af; color: #000; }
+            </style>
+        </head>
+        <body>
+            <h1>🚀 Geminii Tech</h1>
+            <div class="loading">Site carregando...</div>
+            <p>API funcionando! Frontend será carregado em breve.</p>
+            <a href="/api/status" class="api-link">Testar API</a>
+        </body>
+        </html>''', 200
 
 # Rota para a página de ações - CORRIGIDO
 @app.route('/acoes')
@@ -393,7 +389,11 @@ if __name__ == '__main__':
     print("📊 Servidor rodando")
     print(f"📁 Diretório atual: {os.getcwd()}")
     print(f"📁 Diretório do script: {os.path.dirname(__file__)}")
-    print(f"📁 Frontend path: {os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')}")
+    print(f"📁 Frontend path: {os.path.join(os.path.dirname(__file__), '..', 'frontend')}")
+    
+    # Verificar se arquivo existe
+    home_path = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'home.html')
+    print(f"📄 home.html existe: {os.path.exists(home_path)}")
     
     # Configuração para Render - seguindo documentação oficial
     port = int(os.environ.get('PORT', 10000))  # Render usa porta 10000 como padrão
