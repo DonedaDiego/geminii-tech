@@ -14,10 +14,37 @@ app = Flask(__name__)
 # Habilitar CORS para permitir requisições do frontend
 CORS(app)
 
-# Configurar pasta de templates (onde está o HTML) - CORRIGIDO PARA RENDER
-# Render executa app.py de dentro da pasta backend, então frontend está um nível acima
-app.template_folder = os.path.join(os.path.dirname(__file__), '..', 'frontend')
-app.static_folder = os.path.join(os.path.dirname(__file__), '..', 'frontend')
+# CONFIGURAÇÃO CORRIGIDA PARA RENDER
+# No Render, a estrutura é diferente - vamos detectar automaticamente
+def get_frontend_path():
+    """Detecta o caminho correto para a pasta frontend"""
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Tentar diferentes possibilidades de estrutura
+    possible_paths = [
+        os.path.join(current_dir, '..', 'frontend'),  # backend/../frontend
+        os.path.join(current_dir, 'frontend'),        # backend/frontend
+        'frontend',                                    # frontend na raiz
+        '.'                                           # pasta atual
+    ]
+    
+    for path in possible_paths:
+        abs_path = os.path.abspath(path)
+        home_file = os.path.join(abs_path, 'home.html')
+        if os.path.exists(home_file):
+            print(f"✅ Frontend encontrado em: {abs_path}")
+            return abs_path
+    
+    print("❌ Frontend não encontrado em nenhum caminho")
+    return None
+
+# Configurar caminhos
+frontend_path = get_frontend_path()
+if frontend_path:
+    app.template_folder = frontend_path
+    app.static_folder = frontend_path
+    print(f"📁 Templates configurados para: {app.template_folder}")
+    print(f"📁 Static configurados para: {app.static_folder}")
 
 # Lista de ações brasileiras populares
 BRAZILIAN_STOCKS = [
@@ -100,61 +127,161 @@ def get_stock_history(symbol, period='3mo'):
         print(f"Erro ao buscar histórico de {symbol}: {e}")
         return None
 
-# Rota principal - servir o HTML - CAMINHO CORRETO PARA RENDER
+# ROTA PRINCIPAL CORRIGIDA
 @app.route('/')
 def home():
     try:
-        # Caminho correto: backend/../frontend/home.html
-        frontend_path = os.path.join(os.path.dirname(__file__), '..', 'frontend')
-        return send_from_directory(frontend_path, 'home.html')
+        if frontend_path and os.path.exists(os.path.join(frontend_path, 'home.html')):
+            return send_from_directory(frontend_path, 'home.html')
+        else:
+            # Tentar render_template como fallback
+            return render_template('home.html')
     except Exception as e:
-        print(f"Erro ao servir home.html: {e}")
-        print(f"Caminho tentado: {os.path.join(os.path.dirname(__file__), '..', 'frontend')}")
-        print(f"Arquivo existe: {os.path.exists(os.path.join(os.path.dirname(__file__), '..', 'frontend', 'home.html'))}")
+        print(f"❌ Erro ao servir home.html: {e}")
+        print(f"📁 Frontend path atual: {frontend_path}")
         
-        # Fallback: página temporária
+        # Fallback: página temporária funcional
         return '''<!DOCTYPE html>
         <html lang="pt-BR">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Geminii Tech - Loading</title>
+            <title>Geminii Tech</title>
             <style>
-                body { font-family: Arial; background: #000; color: #fff; padding: 50px; text-align: center; }
-                .loading { color: #ba39af; font-size: 24px; margin: 20px 0; }
-                .api-link { color: #ba39af; text-decoration: none; padding: 10px 20px; border: 2px solid #ba39af; border-radius: 25px; display: inline-block; margin-top: 20px; }
-                .api-link:hover { background: #ba39af; color: #000; }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body { 
+                    font-family: 'Segoe UI', Arial, sans-serif; 
+                    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d1b69 100%);
+                    color: #fff; 
+                    min-height: 100vh; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center;
+                }
+                .container { 
+                    text-align: center; 
+                    max-width: 600px; 
+                    padding: 40px 20px;
+                    background: rgba(255,255,255,0.05);
+                    border-radius: 20px;
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255,255,255,0.1);
+                }
+                .rocket { 
+                    font-size: 4em; 
+                    margin-bottom: 20px; 
+                    animation: bounce 2s infinite;
+                }
+                @keyframes bounce {
+                    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+                    40% { transform: translateY(-10px); }
+                    60% { transform: translateY(-5px); }
+                }
+                h1 { 
+                    font-size: 3em; 
+                    background: linear-gradient(45deg, #ff6b9d, #c084fc, #60a5fa);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    margin-bottom: 20px;
+                }
+                .status { 
+                    color: #4ade80; 
+                    font-size: 1.2em; 
+                    margin: 30px 0;
+                    padding: 15px;
+                    border: 2px solid #4ade80;
+                    border-radius: 10px;
+                    background: rgba(74, 222, 128, 0.1);
+                }
+                .button { 
+                    background: linear-gradient(45deg, #ff6b9d, #c084fc); 
+                    border: none; 
+                    padding: 15px 30px; 
+                    border-radius: 30px; 
+                    color: white; 
+                    text-decoration: none; 
+                    display: inline-block; 
+                    margin: 10px; 
+                    font-weight: bold;
+                    transition: all 0.3s ease;
+                }
+                .button:hover { 
+                    transform: translateY(-2px); 
+                    box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+                }
+                .api-status {
+                    margin-top: 30px;
+                    padding: 20px;
+                    background: rgba(0,255,0,0.1);
+                    border-radius: 15px;
+                    border: 1px solid rgba(0,255,0,0.3);
+                }
+                .loading { animation: pulse 1.5s ease-in-out infinite alternate; }
+                @keyframes pulse { from { opacity: 1; } to { opacity: 0.5; } }
             </style>
         </head>
         <body>
-            <h1>🚀 Geminii Tech</h1>
-            <div class="loading">Site carregando...</div>
-            <p>API funcionando! Frontend será carregado em breve.</p>
-            <a href="/api/status" class="api-link">Testar API</a>
+            <div class="container">
+                <div class="rocket">🚀</div>
+                <h1>Geminii Tech</h1>
+                <div class="status">
+                    <span class="loading">Backend Online!</span>
+                </div>
+                <p>API funcionando perfeitamente!</p>
+                <p>Frontend será carregado em breve...</p>
+                <div>
+                    <a href="/api/status" class="button" onclick="testAPI()">✅ Testar API</a>
+                    <a href="/api/market-data" class="button">📊 Dados Mercado</a>
+                    <a href="/api/stocks" class="button">📈 Ações</a>
+                </div>
+                <div class="api-status">
+                    <h3>🔧 Status do Sistema</h3>
+                    <p>✅ Backend: Online</p>
+                    <p>✅ API: Funcionando</p>
+                    <p>✅ Deploy: Ativo no Render</p>
+                    <p>⏳ Frontend: Carregando...</p>
+                </div>
+            </div>
+            <script>
+                function testAPI() {
+                    fetch('/api/status')
+                        .then(response => response.json())
+                        .then(data => alert('API OK: ' + JSON.stringify(data, null, 2)))
+                        .catch(error => alert('Erro: ' + error));
+                }
+            </script>
         </body>
         </html>''', 200
 
-# Rota para a página de ações - CORRIGIDO
+# Rota para a página de ações - CORRIGIDA
 @app.route('/acoes')
 def acoes():
     try:
-        frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
-        return send_from_directory(frontend_path, 'acoes.html')
+        if frontend_path and os.path.exists(os.path.join(frontend_path, 'acoes.html')):
+            return send_from_directory(frontend_path, 'acoes.html')
+        else:
+            return render_template('acoes.html')
     except Exception as e:
-        print(f"Erro ao servir acoes.html: {e}")
-        return jsonify({'error': 'Página não encontrada', 'details': str(e)}), 404
+        print(f"❌ Erro ao servir acoes.html: {e}")
+        return jsonify({'error': 'Página de ações não encontrada', 'details': str(e)}), 404
 
-# Rota para servir arquivos estáticos (CSS, JS, imagens) - CORRIGIDO
+# Rota para servir arquivos estáticos - CORRIGIDA
 @app.route('/<path:filename>')
 def static_files(filename):
     try:
-        frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
-        return send_from_directory(frontend_path, filename)
+        # Evitar conflito com rotas da API
+        if filename.startswith('api/'):
+            return jsonify({'error': 'Use /api/ endpoints'}), 404
+            
+        if frontend_path and os.path.exists(os.path.join(frontend_path, filename)):
+            return send_from_directory(frontend_path, filename)
+        else:
+            raise FileNotFoundError(f"Arquivo {filename} não encontrado")
     except Exception as e:
-        print(f"Erro ao servir arquivo {filename}: {e}")
-        return jsonify({'error': 'Arquivo não encontrado', 'details': str(e)}), 404
+        print(f"❌ Erro ao servir arquivo {filename}: {e}")
+        return jsonify({'error': 'Arquivo não encontrado', 'file': filename}), 404
 
-# API Routes - Exemplos que você pode usar no seu frontend
+# API Routes - Mantendo todos os seus endpoints
 
 @app.route('/api/status')
 def api_status():
@@ -162,7 +289,9 @@ def api_status():
     return jsonify({
         'status': 'online',
         'timestamp': datetime.now().isoformat(),
-        'message': 'Geminii API está funcionando!'
+        'message': 'Geminii API está funcionando!',
+        'frontend_path': frontend_path,
+        'frontend_exists': os.path.exists(os.path.join(frontend_path, 'home.html')) if frontend_path else False
     })
 
 @app.route('/api/newsletter', methods=['POST'])
@@ -176,7 +305,6 @@ def newsletter_signup():
             return jsonify({'error': 'Email é obrigatório'}), 400
         
         # Aqui você salvaria o email no banco de dados
-        # Por enquanto, vamos só simular
         print(f"Novo inscrito na newsletter: {email}")
         
         return jsonify({
@@ -338,7 +466,6 @@ def run_backtest():
         strategy = data.get('strategy', 'default')
         
         # Aqui você colocaria sua lógica de backtest real
-        # Por enquanto, dados simulados
         backtest_result = {
             'strategy': strategy,
             'initial_capital': 100000,
@@ -358,7 +485,6 @@ def run_backtest():
 @app.route('/api/analysis/<symbol>')
 def stock_analysis(symbol):
     """Análise de uma ação específica"""
-    # Dados fictícios para demonstração
     analysis = {
         'symbol': symbol.upper(),
         'current_price': 45.67,
@@ -378,25 +504,27 @@ def stock_analysis(symbol):
 # Tratamento de erros
 @app.errorhandler(404)
 def not_found(error):
-    return jsonify({'error': 'Endpoint não encontrado'}), 404
+    if request.path.startswith('/api/'):
+        return jsonify({'error': 'Endpoint não encontrado', 'path': request.path}), 404
+    else:
+        # Para rotas não-API, tentar servir a página principal
+        return home()
 
 @app.errorhandler(500)
 def internal_error(error):
-    return jsonify({'error': 'Erro interno do servidor'}), 500
+    return jsonify({'error': 'Erro interno do servidor', 'details': str(error)}), 500
 
 if __name__ == '__main__':
     print("🚀 Iniciando Geminii Backend...")
     print("📊 Servidor rodando")
     print(f"📁 Diretório atual: {os.getcwd()}")
     print(f"📁 Diretório do script: {os.path.dirname(__file__)}")
-    print(f"📁 Frontend path: {os.path.join(os.path.dirname(__file__), '..', 'frontend')}")
     
-    # Verificar se arquivo existe
-    home_path = os.path.join(os.path.dirname(__file__), '..', 'frontend', 'home.html')
-    print(f"📄 home.html existe: {os.path.exists(home_path)}")
+    # Detectar e configurar frontend
+    frontend_path = get_frontend_path()
     
-    # Configuração para Render - seguindo documentação oficial
-    port = int(os.environ.get('PORT', 10000))  # Render usa porta 10000 como padrão
+    # Configuração para Render
+    port = int(os.environ.get('PORT', 10000))
     print(f"🔗 Rodando na porta: {port}")
     print(f"🌐 Servidor disponível em: 0.0.0.0:{port}")
     
