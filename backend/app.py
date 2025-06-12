@@ -14,9 +14,9 @@ app = Flask(__name__)
 # Habilitar CORS para permitir requisições do frontend
 CORS(app)
 
-# Configurar pasta de templates (onde está o HTML)
-app.template_folder = '../frontend'
-app.static_folder = '../frontend'
+# Configurar pasta de templates (onde está o HTML) - CORRIGIDO PARA RENDER
+app.template_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
+app.static_folder = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
 
 # Lista de ações brasileiras populares
 BRAZILIAN_STOCKS = [
@@ -99,20 +99,35 @@ def get_stock_history(symbol, period='3mo'):
         print(f"Erro ao buscar histórico de {symbol}: {e}")
         return None
 
-# Rota principal - servir o HTML
+# Rota principal - servir o HTML - CORRIGIDO
 @app.route('/')
 def home():
-    return send_from_directory('../frontend', 'home.html')
+    try:
+        frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
+        return send_from_directory(frontend_path, 'home.html')
+    except Exception as e:
+        print(f"Erro ao servir home.html: {e}")
+        return jsonify({'error': 'Página não encontrada', 'details': str(e)}), 404
 
-# Rota para a página de ações
+# Rota para a página de ações - CORRIGIDO
 @app.route('/acoes')
 def acoes():
-    return send_from_directory('../frontend', 'acoes.html')
+    try:
+        frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
+        return send_from_directory(frontend_path, 'acoes.html')
+    except Exception as e:
+        print(f"Erro ao servir acoes.html: {e}")
+        return jsonify({'error': 'Página não encontrada', 'details': str(e)}), 404
 
-# Rota para servir arquivos estáticos (CSS, JS, imagens)
+# Rota para servir arquivos estáticos (CSS, JS, imagens) - CORRIGIDO
 @app.route('/<path:filename>')
 def static_files(filename):
-    return send_from_directory('../frontend', filename)
+    try:
+        frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')
+        return send_from_directory(frontend_path, filename)
+    except Exception as e:
+        print(f"Erro ao servir arquivo {filename}: {e}")
+        return jsonify({'error': 'Arquivo não encontrado', 'details': str(e)}), 404
 
 # API Routes - Exemplos que você pode usar no seu frontend
 
@@ -348,7 +363,10 @@ if __name__ == '__main__':
     import os
     print("🚀 Iniciando Geminii Backend...")
     print("📊 Servidor rodando")
+    print(f"📁 Diretório atual: {os.getcwd()}")
+    print(f"📁 Diretório do script: {os.path.dirname(__file__)}")
+    print(f"📁 Frontend path: {os.path.join(os.path.dirname(os.path.dirname(__file__)), 'frontend')}")
     
-    # Configuração para Railway
+    # Configuração para Render
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
