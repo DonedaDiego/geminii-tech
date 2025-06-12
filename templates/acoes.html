@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ações - Geminii Tech</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .stock-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      transition: all 0.3s ease;
+    }
+    .stock-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(186, 57, 175, 0.2);
+    }
+    .positive { color: #10b981; }
+    .negative { color: #ef4444; }
+    .loading {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-black to-purple-900 text-white min-h-screen">
+  
+  <!-- Header -->
+  <header class="p-6 border-b border-white border-opacity-10">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <img src="https://app.geminii.com.br/wp-content/uploads/2025/06/logo.png" alt="Geminii" class="w-8 h-8">
+        <h1 class="text-2xl font-bold text-purple-400">Ações</h1>
+      </div>
+      <a href="/" class="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors">
+        <i class="fas fa-home mr-2"></i>Home
+      </a>
+    </div>
+  </header>
+
+  <div class="max-w-6xl mx-auto p-6">
+    
+    <!-- Controles -->
+    <div class="mb-8">
+      <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div class="flex gap-2">
+          <input 
+            id="stockInput" 
+            type="text" 
+            placeholder="Digite o código da ação (ex: PETR4)" 
+            class="px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400"
+          >
+          <button id="addStockBtn" class="px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
+            <i class="fas fa-plus mr-2"></i>Adicionar
+          </button>
+        </div>
+        
+        <div class="flex gap-2">
+          <button id="refreshBtn" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors">
+            <i class="fas fa-sync-alt mr-2"></i>Atualizar
+          </button>
+          <button id="clearBtn" class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors">
+            <i class="fas fa-trash mr-2"></i>Limpar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div id="statusMsg" class="mb-6 p-4 rounded-lg hidden"></div>
+
+    <!-- Grid de Ações -->
+    <div id="stocksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Cards de ações serão inseridos aqui -->
+    </div>
+
+    <!-- Gráfico Detalhado -->
+    <div id="chartSection" class="mt-12 hidden">
+      <h2 class="text-2xl font-bold mb-6 text-center">Gráfico Detalhado</h2>
+      <div class="stock-card p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 id="chartTitle" class="text-xl font-semibold"></h3>
+          <span id="chartPrice" class="text-2xl font-bold text-purple-400"></span>
+        </div>
+        <canvas id="stockChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configurações
+    const API_BASE = window.location.origin + '/api';
+    let currentChart = null;
+    
+    // Ações padrão
+    const defaultStocks = ['PETR4', 'VALE3', 'ITUB4', 'BBDC4'];
+    
+    // Elementos DOM
+    const stocksGrid = document.getElementById('stocksGrid');
+    const stockInput = document.getElementById('stockInput');
+    const addStockBtn = document.getElementById('addStockBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    const chartSection = document.getElementById('chartSection');
+    
+    // Lista de ações monitoradas
+    let watchList = [...defaultStocks];
+    
+    // Funções utilitárias
+    function showStatus(message, type = 'info') {
+      statusMsg.className = `mb-6 p-4 rounded-lg ${type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600'}`;
+      statusMsg.textContent = message;
+      statusMsg.classList.remove('hidden');
+      setTimeout(() => statusMsg.classList.add('hidden'), 3000);
+    }
+    
+    function formatCurrency(value) {
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(value);
+    }
+    
+    // Buscar dados de uma ação
+    async function fetchStockData(symbol) {
+      try {
+        const response = await fetch(`${API_BASE}/stock/${symbol}`);
+        const data = await response.json();
+        return data.success ? data.data : null;
+      } catch (error) {
+        console.error('Erro ao buscar ação:', error);
+        return null;
+      }
+    }
+    
+    // Criar card de ação
+    function createStockCard(stockData) {
+      const isPositive = stockData.change >= 0;
+      const changeClass = isPositive ? 'positive' : 'negative';
+      const changeIcon = isPositive ? 'fa-arrow-up' : 'fa-arrow-down';
+      
+      return `
+        <div class="stock-card p-6 cursor-pointer" onclick="showChart('${stockData.symbol}')">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h3 class="text-xl font-bold">${stockData.symbol}</h3>
+              <p class="text-gray-400 text-sm">Última atualização: ${stockData.last_update}</p>
+            </div>
+            <button onclick="removeStock('${stockData.symbol}', event)" class="text-red-400 hover:text-red-300">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          
+          <div class="space-y-3">
+            <div>
+              <span class="text-3xl font-bold text-purple-400">${formatCurrency(stockData.current_price)}</span>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <i class="fas ${changeIcon} ${changeClass}"></i>
+              <span class="${changeClass} font-semibold">
+                ${formatCurrency(Math.abs(stockData.change))} (${Math.abs(stockData.change_percent).toFixed(2)}%)
+              </span>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white border-opacity-10">
+              <div>
+                <p class="text-gray-400 text-xs">Volume</p>
+                <p class="font-semibold">${stockData.volume.toLocaleString('pt-BR')}</p>
+              </div>
+              <div>
+                <p class="text-gray-400 text-xs">Pontos Gráfico</p>
+                <p class="font-semibold">${stockData.chart_data.length}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    // Atualizar grid de ações
+    async function updateStocksGrid() {
+      stocksGrid.innerHTML = '<div class="col-span-full text-center loading">Carregando ações...</div>';
+      
+      const stocksData = [];
+      
+      for (const symbol of watchList) {
+        const data = await fetchStockData(symbol);
+        if (data) {
+          stocksData.push(data);
+        }
+      }
+      
+      if (stocksData.length === 0) {
+        stocksGrid.innerHTML = '<div class="col-span-full text-center text-gray-400">Nenhuma ação encontrada</div>';
+        return;
+      }
+      
+      stocksGrid.innerHTML = stocksData.map(createStockCard).join('');
+    }
+    
+    // Adicionar ação
+    function addStock() {
+      const symbol = stockInput.value.trim().toUpperCase();
+      
+      if (!symbol) {
+        showStatus('Digite o código de uma ação', 'error');
+        return;
+      }
+      
+      if (watchList.includes(symbol)) {
+        showStatus('Ação já está na lista', 'error');
+        return;
+      }
+      
+      watchList.push(symbol);
+      stockInput.value = '';
+      showStatus(`${symbol} adicionada à lista`, 'success');
+      updateStocksGrid();
+    }
+    
+    // Remover ação
+    function removeStock(symbol, event) {
+      event.stopPropagation();
+      watchList = watchList.filter(s => s !== symbol);
+      showStatus(`${symbol} removida da lista`, 'success');
+      updateStocksGrid();
+    }
+    
+    // Mostrar gráfico
+    async function showChart(symbol) {
+      const data = await fetchStockData(symbol);
+      if (!data) return;
+      
+      chartSection.classList.remove('hidden');
+      document.getElementById('chartTitle').textContent = `${symbol} - Últimos 30 dias`;
+      document.getElementById('chartPrice').textContent = formatCurrency(data.current_price);
+      
+      const ctx = document.getElementById('stockChart').getContext('2d');
+      
+      if (currentChart) {
+        currentChart.destroy();
+      }
+      
+      currentChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.chart_data.map(d => d.date),
+          datasets: [{
+            label: 'Preço de Fechamento',
+            data: data.chart_data.map(d => d.price),
+            borderColor: '#ba39af',
+            backgroundColor: 'rgba(186, 57, 175, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              labels: { color: 'white' }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: 'white' },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            y: {
+              ticks: { 
+                color: 'white',
+                callback: function(value) {
+                  return formatCurrency(value);
+                }
+              },
+              grid: { color: 'rgba(255,255,255,0.1)' }
+            }
+          }
+        }
+      });
+      
+      // Scroll para o gráfico
+      chartSection.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    // Event Listeners
+    addStockBtn.addEventListener('click', addStock);
+    refreshBtn.addEventListener('click', updateStocksGrid);
+    clearBtn.addEventListener('click', () => {
+      watchList = [];
+      stocksGrid.innerHTML = '<div class="col-span-full text-center text-gray-400">Lista limpa</div>';
+      chartSection.classList.add('hidden');
+    });
+    
+    stockInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addStock();
+    });
+    
+    // Inicializar
+    updateStocksGrid();
+    showStatus('Carregando ações padrão...', 'info');
+    
+    // Auto refresh a cada 2 minutos
+    setInterval(updateStocksGrid, 120000);
+  </script>
+</body>
+</html>
