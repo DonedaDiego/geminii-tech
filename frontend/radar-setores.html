@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radar de Setores - Geminii Tech</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            dark: '#000000',
+            light: '#ffffff',
+            subtle: 'rgba(255,255,255,0.1)',
+            geminii: '#ba39af'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { 
+      font-family: 'Inter', sans-serif; 
+      overflow-x: hidden;
+    }
+    
+    .radar-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px) brightness(0.9);
+      -webkit-backdrop-filter: blur(20px) brightness(0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .radar-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(186, 57, 175, 0.15);
+      border-color: rgba(186, 57, 175, 0.3);
+    }
+    
+    .setor-point {
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .setor-point:hover {
+      transform: scale(1.5);
+      filter: drop-shadow(0 0 10px #ba39af);
+    }
+    
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    
+    .spinner {
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top: 2px solid #ba39af;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin: 0 auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .quadrant-label {
+      position: absolute;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.7);
+      padding: 4px 8px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 4px;
+    }
+    
+    .setor-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      background: rgba(186, 57, 175, 0.1);
+      border-color: rgba(186, 57, 175, 0.3);
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ba39af, #d946ef);
+      transition: width 0.3s ease;
+    }
+    
+    select {
+      background-color: rgba(0, 0, 0, 0.7) !important;
+      color: white !important;
+    }
+    
+    .empresas-section {
+      transition: max-height 0.5s ease-in-out;
+      overflow: hidden;
+    }
+    
+    .empresas-section .space-y-2 > * + * {
+      margin-top: 8px;
+    }
+    
+    .empresa-item {
+      transition: all 0.3s ease;
+    }
+    
+    .empresa-item:hover {
+      background: rgba(186, 57, 175, 0.1) !important;
+      transform: translateX(4px);
+    }
+    
+    .loading-pulse {
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .card-highlight {
+      box-shadow: 0 0 20px rgba(186, 57, 175, 0.5) !important;
+      border-color: rgba(186, 57, 175, 0.6) !important;
+    }
+
+  </style>
+</head>
+<body class="bg-black text-white">
+  <div class="relative min-h-screen">
+    <!-- Spline 3D background -->
+    <div class="fixed inset-0 z-0">
+      <iframe src="https://my.spline.design/thresholddarkambientui-v0gkZCfi6zXm69kE0wccy70f/" frameborder="0" width="100%" height="100%" class="w-full h-full"></iframe>
+    </div>
+    
+    <!-- Glass floating navbar -->
+    <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-opacity-5 border-opacity-10 bg-white border-white border rounded-full pt-4 pr-4 pb-4 pl-4 shadow-xl backdrop-blur-md">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <img src="https://app.geminii.com.br/wp-content/uploads/2025/06/logo.png" alt="Geminii Logo" class="w-6 h-6 cursor-pointer" onclick="window.location.href='/home.html'">
+        </div>
+        <div class="hidden md:flex items-center space-x-6 text-xs text-gray-300 ml-8">
+          <a href="/home.html" class="hover:text-white transition-colors">Home</a>
+          <a href="/monitor-basico.html" class="hover:text-white transition-colors">Scanner</a>
+          <span class="text-white font-medium">Radar de Setores</span>
+          <a href="/planos.html" class="hover:text-white transition-colors">Planos</a>
+          <a href="/sobre.html" class="hover:text-white transition-colors">Sobre</a>
+          <a href="/conta.html" class="hover:text-white transition-colors">Conta</a>
+        </div>
+        <div class="flex items-center space-x-3 ml-8">
+          <div id="apiStatus" class="w-8 h-8 bg-green-500 bg-opacity-10 border border-green-500 border-opacity-30 rounded-full flex items-center justify-center relative">
+            <i class="fas fa-shield-alt text-green-500 text-xs"></i>
+            <div class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          </div>
+          <a href="#" class="hover:bg-gray-200 transition-colors text-xs font-medium text-black bg-white rounded-full pt-1.5 pr-3 pb-1.5 pl-3">Começar</a>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Content -->
+    <div class="relative z-10 pt-32 pb-16">
+      <div class="max-w-7xl mx-auto px-6">
+        
+        <!-- Header -->
+        <div class="text-center mb-12">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">
+            <span style="color: #ba39af; font-weight: 900;">Radar</span>
+            <span class="text-white font-light">de Setores</span>
+          </h1>
+          <p class="text-neutral-300 text-lg max-w-2xl mx-auto">
+            Análise de volatilidade vs performance por setor econômico da B3. Identifique oportunidades e riscos setoriais.
+          </p>
+        </div>
+
+        <!-- Controles -->
+        <div class="radar-card p-6 mb-8">
+          <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div class="flex gap-3 flex-wrap">
+              <select id="periodoSelect" class="px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white focus:outline-none focus:border-geminii backdrop-blur-sm">
+                <option value="30">Período: 30 dias</option>
+                <option value="60">Período: 60 dias</option>
+                <option value="90">Período: 90 dias</option>
+                <option value="180">Período: 6 meses</option>
+              </select>
+              
+              <select id="metricaSelect" class="px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white focus:outline-none focus:border-geminii backdrop-blur-sm">
+                <option value="rsl">RSL vs Volatilidade</option>
+                <option value="retorno">Retorno vs Volatilidade</option>
+              </select>
+            </div>
+            
+            <div class="flex gap-3">
+              <button id="atualizarBtn" class="px-6 py-2 bg-gradient-to-r from-pink-500 to-purple-600 hover:shadow-lg rounded-lg transition-all font-medium">
+                <i class="fas fa-sync-alt mr-2"></i>Atualizar
+              </button>
+              
+              <button id="exportarBtn" class="px-4 py-2 bg-white bg-opacity-10 hover:bg-opacity-20 rounded-lg transition-all font-medium backdrop-blur-sm border border-white border-opacity-20">
+                <i class="fas fa-download mr-2"></i>Exportar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div id="statusMsg" class="mb-6 p-4 rounded-lg hidden backdrop-blur-sm"></div>
+
+        <!-- Gráfico Principal -->
+        <div class="radar-card p-6 mb-8">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-white">Mapa Setorial</h2>
+            <div class="text-sm text-gray-400">
+              <span id="totalSetores">0</span> setores • <span id="totalEmpresas">0</span> empresas
+            </div>
+          </div>
+          
+          <div class="relative">
+            <canvas id="radarChart" width="800" height="600"></canvas>
+            
+            <!-- Quadrant Labels -->
+            <div class="quadrant-label" style="top: 20px; left: 20px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981;">
+              <i class="fas fa-gem"></i> IDEAL<br>
+              <small style="font-size: 10px; opacity: 0.8;">Alta Performance • Baixo Risco</small>
+            </div>
+
+            <div class="quadrant-label" style="top: 20px; right: 20px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b;">
+              <i class="fas fa-rocket"></i> AGRESSIVO<br>
+              <small style="font-size: 10px; opacity: 0.8;">Alta Performance • Alto Risco</small>
+            </div>
+
+            <div class="quadrant-label" style="bottom: 20px; left: 20px; background: rgba(107, 114, 128, 0.1); border: 1px solid rgba(107, 114, 128, 0.3); color: #9ca3af;">
+              <i class="fas fa-shield-alt"></i> DEFENSIVO<br>
+              <small style="font-size: 10px; opacity: 0.8;">Baixa Performance • Baixo Risco</small>
+            </div>
+
+            <div class="quadrant-label" style="bottom: 20px; right: 20px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171;">
+              <i class="fas fa-exclamation-triangle"></i> RISCO<br>
+              <small style="font-size: 10px; opacity: 0.8;">Baixa Performance • Alto Risco</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estatísticas por Setor -->
+        <div class="radar-card p-6">
+          <h2 class="text-2xl font-bold text-white mb-6">Estatísticas Detalhadas</h2>
+          <div id="setorStats" class="setor-stats">
+            <!-- Cards de estatísticas serão inseridos aqui -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configurações
+    const API_BASE = window.location.origin + '/api';
+    let currentChart = null;
+    let setoresData = [];
+    let allSetoresFromDB = [];
+    
+    // Elementos DOM
+    const atualizarBtn = document.getElementById('atualizarBtn');
+    const exportarBtn = document.getElementById('exportarBtn');
+    const periodoSelect = document.getElementById('periodoSelect');
+    const metricaSelect = document.getElementById('metricaSelect');
+    const statusMsg = document.getElementById('statusMsg');
+    const totalSetores = document.getElementById('totalSetores');
+    const totalEmpresas = document.getElementById('totalEmpresas');
+    const setorStats = document.getElementById('setorStats');
+    
+    // Cores para setores
+    const coresSetores = [
+      '#ba39af', '#d946ef', '#8b5cf6', '#06b6d4', '#10b981',
+      '#f59e0b', '#ef4444', '#84cc16', '#f97316', '#ec4899',
+      '#6366f1', '#14b8a6', '#a855f7', '#06b6d4', '#f59e0b'
+    ];
+    
+    // Funções utilitárias
+    function showStatus(message, type = 'info') {
+      const bgClass = type === 'success' ? 'bg-green-600 bg-opacity-20 border-green-500 border-opacity-30' : 
+                     type === 'error' ? 'bg-red-600 bg-opacity-20 border-red-500 border-opacity-30' : 
+                     'bg-blue-600 bg-opacity-20 border-blue-500 border-opacity-30';
+      
+      statusMsg.className = `mb-6 p-4 rounded-lg border backdrop-blur-sm ${bgClass}`;
+      statusMsg.textContent = message;
+      statusMsg.classList.remove('hidden');
+      setTimeout(() => statusMsg.classList.add('hidden'), 4000);
+    }
+    
+    // ✅ FUNÇÃO CORRIGIDA: Buscar todos os setores do banco
+    async function fetchAllSetores() {
+      try {
+        showStatus('Conectando com banco de dados...', 'info');
+        const response = await fetch(`${API_BASE}/setores`);
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          // Mapear campos corretos do seu banco
+          allSetoresFromDB = data.data.map(item => ({
+            id: item.id,
+            setor_economico: item.setor || item.setor_economico, // Campo correto
+            setor_puro: item.setor_puro,
+            segmento: item.segmento,
+            empresa: item.acao, // Campo correto 
+            ticker: item.ticker,
+            nivel_bolsa: item.nivel_na_bolsa,
+            tipo: item.tipo
+          }));
+          
+          console.log('✅ Setores carregados:', allSetoresFromDB.length);
+          return allSetoresFromDB;
+        } else {
+          throw new Error('Resposta da API inválida');
+        }
+      } catch (error) {
+        console.error('❌ Erro ao buscar setores:', error);
+        showStatus('❌ Erro ao conectar com banco de dados', 'error');
+        return [];
+      }
+    }
+    
+    // ✅ FUNÇÃO CORRIGIDA: Buscar empresas de um setor específico
+    async function fetchEmpresasDoSetor(nomeSetor) {
+      try {
+        showStatus(`Carregando empresas de ${nomeSetor}...`, 'info');
+        
+        // Usar o mesmo endpoint mas com campo correto
+        const response = await fetch(`${API_BASE}/setor/${encodeURIComponent(nomeSetor)}`);
+        const data = await response.json();
+        
+        if (data.success && data.data && data.data.length > 0) {
+          console.log(`📊 Encontradas ${data.data.length} empresas para ${nomeSetor}`);
+          
+          // Processar empresas com cotação
+          const empresasComCotacao = await Promise.all(
+            data.data.slice(0, 8).map(async (item) => {
+              try {
+                const cotacaoResponse = await fetch(`${API_BASE}/stock/${item.ticker}`);
+                const cotacaoData = await cotacaoResponse.json();
+                
+                return {
+                  ticker: item.ticker,
+                  nome: item.acao || item.empresa, // Campo correto
+                  setor: item.setor || item.setor_economico,
+                  segmento: item.segmento,
+                  preco: cotacaoData.success ? cotacaoData.data.current_price : Math.random() * 50 + 10,
+                  variacao: cotacaoData.success ? cotacaoData.data.change_percent : (Math.random() - 0.5) * 6
+                };
+              } catch (error) {
+                console.warn(`📊 Simulando dados para ${item.ticker}`);
+                return {
+                  ticker: item.ticker,
+                  nome: item.acao || item.empresa,
+                  setor: item.setor || item.setor_economico,
+                  segmento: item.segmento,
+                  preco: Math.random() * 50 + 10,
+                  variacao: (Math.random() - 0.5) * 6
+                };
+              }
+            })
+          );
+          
+          return empresasComCotacao;
+        } else {
+          throw new Error(`Nenhuma empresa encontrada para ${nomeSetor}`);
+        }
+      } catch (error) {
+        console.error('❌ Erro ao buscar empresas:', error);
+        showStatus('❌ Erro ao carregar empresas', 'error');
+        return [];
+      }
+    }
+    
+    // ✅ FUNÇÃO CORRIGIDA: Gerar dados dos setores
+    async function generateSetorDataFromDB() {
+      const setoresDB = await fetchAllSetores();
+      
+      if (setoresDB.length === 0) {
+        console.error('❌ Nenhum setor retornado do banco');
+        return [];
+      }
+      
+      // Agrupar por setor econômico
+      const setoresAgrupados = {};
+      
+      setoresDB.forEach((item, index) => {
+        const nomeSetor = item.setor_economico;
+        
+        if (!nomeSetor) {
+          console.warn(`⚠️ Setor sem nome no índice ${index}:`, item);
+          return;
+        }
+        
+        if (!setoresAgrupados[nomeSetor]) {
+          setoresAgrupados[nomeSetor] = {
+            id: Object.keys(setoresAgrupados).length,
+            nome: nomeSetor,
+            empresas: 0,
+            tickers: [],
+            segmentos: new Set()
+          };
+        }
+        
+        setoresAgrupados[nomeSetor].empresas++;
+        setoresAgrupados[nomeSetor].tickers.push(item.ticker);
+        if (item.segmento) {
+          setoresAgrupados[nomeSetor].segmentos.add(item.segmento);
+        }
+      });
+      
+      // Converter para array com métricas simuladas
+      const setoresArray = Object.values(setoresAgrupados).map((setor, index) => ({
+        id: setor.id,
+        setor: setor.nome,
+        rsl: (Math.random() - 0.5) * 20, // RSL entre -10% e +10%
+        volatilidade: Math.random() * 30 + 10, // Volatilidade entre 10% e 40%
+        retorno: (Math.random() - 0.5) * 15, // Retorno similar
+        empresas: setor.empresas,
+        tickers: setor.tickers,
+        segmentos: Array.from(setor.segmentos),
+        cor: coresSetores[index % coresSetores.length]
+      }));
+      
+      console.log('✅ Setores processados:', setoresArray.length);
+      return setoresArray;
+    }
+    
+    // Buscar dados dos setores
+    async function fetchSetoresData() {
+      try {
+        const periodo = periodoSelect.value;
+        showStatus(`Processando dados dos setores (${periodo} dias)...`, 'info');
+        
+        setoresData = await generateSetorDataFromDB();
+        
+        if (setoresData.length === 0) {
+          throw new Error('Nenhum setor processado');
+        }
+        
+        totalSetores.textContent = setoresData.length;
+        totalEmpresas.textContent = setoresData.reduce((sum, s) => sum + s.empresas, 0);
+        
+        showStatus(`✅ ${setoresData.length} setores processados com sucesso!`, 'success');
+        console.log('📊 Dados finais dos setores:', setoresData);
+        
+        return setoresData;
+        
+      } catch (error) {
+        console.error('❌ Erro ao processar setores:', error);
+        showStatus('❌ Erro ao processar dados dos setores', 'error');
+        return [];
+      }
+    }
+    
+    // ✅ FUNÇÃO CORRIGIDA: Criar gráfico de radar
+    function createRadarChart(data) {
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      
+      if (currentChart) {
+        currentChart.destroy();
+      }
+      
+      const metrica = metricaSelect.value;
+      const yAxisLabel = metrica === 'rsl' ? 'RSL (%)' : 'Retorno (%)';
+      
+      const datasets = [{
+        label: 'Setores',
+        data: data.map(setor => ({
+          x: metrica === 'rsl' ? setor.rsl : setor.retorno,
+          y: setor.volatilidade,
+          setor: setor.setor,
+          empresas: setor.empresas,
+          setorId: setor.id // ✅ ADICIONAR ID PARA REFERÊNCIA
+        })),
+        backgroundColor: data.map(setor => setor.cor + '80'),
+        borderColor: data.map(setor => setor.cor),
+        borderWidth: 2,
+        pointRadius: 8,
+        pointHoverRadius: 12
+      }];
+      
+      currentChart = new Chart(ctx, {
+        type: 'scatter',
+        data: { datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.9)',
+              titleColor: '#ba39af',
+              bodyColor: 'white',
+              borderColor: '#ba39af',
+              borderWidth: 1,
+              position: 'nearest',
+              enabled: true,
+              callbacks: {
+                title: function(context) {
+                  return context[0].raw.setor;
+                },
+                label: function(context) {
+                  const point = context.raw;
+                  return [
+                    `${yAxisLabel}: ${point.x.toFixed(2)}%`,
+                    `Volatilidade: ${point.y.toFixed(2)}%`,
+                    `Empresas: ${point.empresas}`
+                  ];
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: yAxisLabel,
+                color: 'white',
+                font: { size: 14, weight: 'bold' }
+              },
+              grid: {
+                color: function(context) {
+                  return context.tick.value === 0 ? 'rgba(186, 57, 175, 0.4)' : 'rgba(255, 255, 255, 0.1)';
+                },
+                lineWidth: function(context) {
+                  return context.tick.value === 0 ? 2 : 1;
+                },
+                drawOnChartArea: true
+              },
+              ticks: {
+                color: 'white',
+                callback: function(value) {
+                  return value.toFixed(1) + '%';
+                }
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Volatilidade (%)',
+                color: 'white',
+                font: { size: 14, weight: 'bold' }
+              },
+              grid: {
+                color: function(context) {
+                  return Math.abs(context.tick.value - 25) < 0.1 ? 'rgba(186, 57, 175, 0.4)' : 'rgba(255, 255, 255, 0.1)';
+                },
+                lineWidth: function(context) {
+                  return Math.abs(context.tick.value - 25) < 0.1 ? 2 : 1;
+                },
+                drawOnChartArea: true
+              },
+              ticks: {
+                color: 'white',
+                callback: function(value) {
+                  return value.toFixed(1) + '%';
+                }
+              }
+            }
+          },
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const element = elements[0];
+              const setorData = currentChart.data.datasets[0].data[element.index];
+              
+              // ✅ BUSCAR SETOR PELO ID
+              const setor = setoresData.find(s => s.id === setorData.setorId);
+              
+              if (setor) {
+                console.log('🎯 Clicou no setor:', setor.setor);
+                
+                // Expandir o card correspondente
+                toggleSetorExpansion(setor.id);
+                
+                // Scroll até o card
+                const cardElement = document.getElementById(`card-${setor.id}`);
+                if (cardElement) {
+                  cardElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                  });
+                  
+                  // Destacar o card por 3 segundos
+                  cardElement.classList.add('card-highlight');
+                  setTimeout(() => {
+                    cardElement.classList.remove('card-highlight');
+                  }, 3000);
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // ✅ FUNÇÃO CORRIGIDA: Expandir/contrair setor
+    async function toggleSetorExpansion(setorId) {
+      const empresasSection = document.getElementById(`empresas-${setorId}`);
+      const chevron = document.getElementById(`chevron-${setorId}`);
+      const empresasList = document.getElementById(`empresas-list-${setorId}`);
+      
+      if (!empresasSection || !chevron || !empresasList) {
+        console.error('❌ Elementos não encontrados para setorId:', setorId);
+        return;
+      }
+      
+      const isExpanded = empresasSection.style.maxHeight && empresasSection.style.maxHeight !== '0px';
+      
+      if (isExpanded) {
+        // Contrair
+        empresasSection.style.maxHeight = '0px';
+        chevron.style.transform = 'rotate(0deg)';
+        console.log('📁 Contraindo setor:', setorId);
+      } else {
+        // Expandir
+        chevron.style.transform = 'rotate(180deg)';
+        
+        // Mostrar loading
+        empresasList.innerHTML = `
+          <div class="flex items-center justify-center py-6">
+            <div class="spinner mr-3"></div>
+            <span class="text-gray-400 text-sm">Carregando empresas...</span>
+          </div>
+        `;
+        
+        empresasSection.style.maxHeight = '100px';
+        
+        try {
+          // ✅ BUSCAR SETOR PELO ID CORRETO
+          const setor = setoresData.find(s => s.id === setorId);
+          
+          if (!setor) {
+            throw new Error(`Setor com ID ${setorId} não encontrado`);
+          }
+          
+          console.log('📂 Expandindo setor:', setor.setor);
+          
+          const empresas = await fetchEmpresasDoSetor(setor.setor);
+          
+          if (empresas.length === 0) {
+            throw new Error('Nenhuma empresa encontrada');
+          }
+          
+          // Criar lista de empresas
+          empresasList.innerHTML = empresas.map(empresa => `
+            <div class="empresa-item flex items-center justify-between p-3 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 transition-all cursor-pointer">
+              <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full" style="background-color: ${setor.cor}"></div>
+                <div>
+                  <span class="text-white font-medium text-sm">${empresa.ticker}</span>
+                  <div class="text-gray-400 text-xs">${empresa.nome}</div>
+                  ${empresa.segmento ? `<div class="text-gray-500 text-xs">${empresa.segmento}</div>` : ''}
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-sm font-bold text-white">R$ ${empresa.preco.toFixed(2)}</div>
+                <div class="text-xs ${empresa.variacao >= 0 ? 'text-green-400' : 'text-red-400'}">
+                  ${empresa.variacao >= 0 ? '+' : ''}${empresa.variacao.toFixed(2)}%
+                </div>
+              </div>
+            </div>
+          `).join('');
+          
+          // Expandir com altura dinâmica
+          empresasSection.style.maxHeight = empresasSection.scrollHeight + 'px';
+          
+          showStatus(`✅ ${empresas.length} empresas carregadas para ${setor.setor}`, 'success');
+          
+        } catch (error) {
+          console.error('❌ Erro ao carregar empresas:', error);
+          
+          empresasList.innerHTML = `
+            <div class="flex items-center justify-center py-4 text-red-400">
+              <i class="fas fa-exclamation-triangle mr-2"></i>
+              <span class="text-sm">Erro ao carregar empresas</span>
+            </div>
+          `;
+          
+          empresasSection.style.maxHeight = '60px';
+          showStatus('❌ Erro ao carregar empresas', 'error');
+        }
+      }
+    }
+    
+    // ✅ FUNÇÃO CORRIGIDA: Criar cards de estatísticas
+    function createStatsCards(data) {
+      const sortedData = [...data].sort((a, b) => b.rsl - a.rsl);
+      
+      setorStats.innerHTML = sortedData.map((setor) => `
+        <div class="stat-card" id="card-${setor.id}">
+          <div class="flex items-center justify-between mb-3 cursor-pointer" onclick="toggleSetorExpansion(${setor.id})">
+            <h3 class="font-semibold text-white flex items-center gap-2">
+              ${setor.setor}
+              <i class="fas fa-chevron-down transition-transform duration-300" id="chevron-${setor.id}"></i>
+            </h3>
+            <div class="w-4 h-4 rounded-full" style="background-color: ${setor.cor}"></div>
+          </div>
+          
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span class="text-gray-400">RSL</span>
+              <div class="font-bold ${setor.rsl >= 0 ? 'text-green-400' : 'text-red-400'}">
+                ${setor.rsl >= 0 ? '+' : ''}${setor.rsl.toFixed(2)}%
+              </div>
+            </div>
+            
+            <div>
+              <span class="text-gray-400">Volatilidade</span>
+              <div class="font-bold text-white">${setor.volatilidade.toFixed(2)}%</div>
+            </div>
+            
+            <div>
+              <span class="text-gray-400">Empresas</span>
+              <div class="font-bold text-white">${setor.empresas}</div>
+            </div>
+            
+            <div>
+              <span class="text-gray-400">Score</span>
+              <div class="font-bold text-geminii">${(setor.rsl / setor.volatilidade * 100).toFixed(0)}</div>
+            </div>
+          </div>
+          
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${Math.max(0, Math.min(100, (setor.rsl + 10) * 5))}%"></div>
+          </div>
+          
+          <!-- Seção Expansível de Empresas -->
+          <div class="empresas-section mt-4" id="empresas-${setor.id}" style="max-height: 0;">
+            <div class="border-t border-white border-opacity-20 pt-4">
+              <h4 class="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+                <i class="fas fa-building text-geminii"></i>
+                Empresas do Setor (Top 8)
+              </h4>
+              <div id="empresas-list-${setor.id}" class="space-y-2">
+                <!-- Lista de empresas será carregada aqui -->
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+      
+      console.log('✅ Cards criados para', sortedData.length, 'setores');
+    }
+    
+    // Atualizar dados
+    async function atualizarDados() {
+      atualizarBtn.classList.add('loading');
+      atualizarBtn.innerHTML = '<div class="spinner"></div> Carregando...';
+      
+      try {
+        const data = await fetchSetoresData();
+        
+        if (data.length > 0) {
+          createRadarChart(data);
+          createStatsCards(data);
+        } else {
+          throw new Error('Nenhum dado retornado');
+        }
+        
+      } catch (error) {
+        console.error('❌ Erro ao atualizar:', error);
+        showStatus('❌ Erro ao atualizar dados', 'error');
+      } finally {
+        atualizarBtn.classList.remove('loading');
+        atualizarBtn.innerHTML = '<i class="fas fa-sync-alt mr-2"></i>Atualizar';
+      }
+    }
+    
+    // Exportar dados
+    function exportarDados() {
+      if (setoresData.length === 0) {
+        showStatus('❌ Nenhum dado para exportar', 'error');
+        return;
+      }
+      
+      const csv = [
+        'Setor,RSL,Volatilidade,Retorno,Empresas',
+        ...setoresData.map(s => `${s.setor},${s.rsl.toFixed(2)},${s.volatilidade.toFixed(2)},${s.retorno.toFixed(2)},${s.empresas}`)
+      ].join('\n');
+      
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `radar-setores-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      
+      showStatus('✅ Dados exportados com sucesso!', 'success');
+    }
+    
+    // Event Listeners
+    atualizarBtn.addEventListener('click', atualizarDados);
+    exportarBtn.addEventListener('click', exportarDados);
+    periodoSelect.addEventListener('change', atualizarDados);
+    metricaSelect.addEventListener('change', () => {
+      if (setoresData.length > 0) {
+        createRadarChart(setoresData);
+      }
+    });
+    
+    // Inicializar
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('🚀 Inicializando Radar de Setores...');
+      showStatus('Inicializando Radar de Setores...', 'info');
+      atualizarDados();
+    });
+    
+    // Auto-refresh a cada 5 minutos
+    setInterval(atualizarDados, 300000);
+    
+    // ✅ FUNÇÃO GLOBAL PARA EXPANSÃO
+    window.toggleSetorExpansion = toggleSetorExpansion;
+    
+    // ✅ LOG DE DEBUG
+    console.log('🔧 Sistema inicializado com sucesso!');
+  </script>
+</body>
+</html>

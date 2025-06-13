@@ -589,34 +589,34 @@
     </div>
     
     <!-- Glass floating navbar -->
-    <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-opacity-5 border-opacity-10 bg-white border-white border rounded-full pt-3 pr-4 pb-3 pl-4 shadow-xl backdrop-blur-md">
+    <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-opacity-5 border-opacity-10 bg-white border-white border rounded-full pt-4 pr-4 pb-4 pl-4 shadow-xl backdrop-blur-md">
       <div class="flex items-center justify-between">
         <div class="flex items-center">
           <img src="https://app.geminii.com.br/wp-content/uploads/2025/06/logo.png" alt="Geminii Logo" class="w-6 h-6 neon-logo">
         </div>
         <div class="hidden md:flex items-center space-x-6 text-xs text-gray-300 ml-8">
-          <a href="/" class="hover:text-white transition-colors">Home</a>
+          <a href="/" class="hover:text-white transition-colors"></a>
           
           <!-- Dropdown Opções -->
           <div class="dropdown">
-            <span class="dropdown-toggle hover:text-white transition-colors">Opções</span>
+            <span class="dropdown-toggle hover:text-white transition-colors">Scanner</span>
             <div class="dropdown-content">
               <div class="dropdown-grid">
-                <div class="dropdown-item">
-                  <h4>Scanner de Opções</h4>
-                  <p>Encontre as melhores oportunidades em opções com filtros avançados e análise em tempo real.</p>
+                <div class="dropdown-item" onclick="window.location.href='/monitor-basico.html'">
+                  <h4>Monitor Básico <span class="dropdown-badge" style="background: #10b981;">Grátis</span></h4>
+                  <p>Análise técnica essencial com indicadores principais e OBV.</p>
                 </div>
                 <div class="dropdown-item">
-                  <h4>Estratégias Prontas</h4>
-                  <p>Acesse estratégias pré-configuradas para diferentes cenários de mercado.</p>
+                  <h4>Scanner Avançado <span class="dropdown-badge" style="background: #f59e0b;">Pro</span></h4>
+                  <p>Filtros personalizados, alertas em tempo real e análise técnica completa.</p>
+                </div>
+                <div class="dropdown-item" onclick="window.location.href='/radar-setores.html'">
+                  <h4>Radar de Setores <span class="dropdown-badge" style="background: #10b981;">Grátis</span></h4>
+                  <p>Identifique setores em alta e oportunidades emergentes.</p>
                 </div>
                 <div class="dropdown-item">
-                  <h4>Calculadora de Greeks</h4>
-                  <p>Calcule Delta, Gamma, Theta e Vega para otimizar suas posições.</p>
-                </div>
-                <div class="dropdown-item">
-                  <h4>Volatilidade Implícita <span class="dropdown-badge">Novo</span></h4>
-                  <p>Monitore a volatilidade implícita e identifique oportunidades de arbitragem.</p>
+                  <h4>Alertas Inteligentes <span class="dropdown-badge" style="background: #f59e0b;">Pro</span></h4>
+                  <p>Notificações personalizadas quando suas condições forem atingidas.</p>
                 </div>
               </div>
             </div>
@@ -647,16 +647,15 @@
             </div>
           </div>
 
-          <a href="/acoes" class="hover:text-white transition-colors">Ações</a>
-          <a href="#" class="hover:text-white transition-colors">Análises</a>
-          <a href="#" class="hover:text-white transition-colors">Contato</a>
+          <a href="/planos" class="hover:text-white transition-colors">Planos</a>
+          <a href="/sobre" class="hover:text-white transition-colors">Sobre</a>
+          <a href="/conta" class="hover:text-white transition-colors">Conta</a>
         </div>
         <div class="flex items-center space-x-3 ml-8">
           <div id="apiStatus" class="w-8 h-8 bg-green-500 bg-opacity-10 border border-green-500 border-opacity-30 rounded-full flex items-center justify-center relative">
             <i class="fas fa-shield-alt text-green-500 text-xs"></i>
             <div class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
           </div>
-          <a href="#" class="hidden md:inline-block text-xs font-medium hover:text-white transition-colors">Login</a>
           <a href="#" class="hover:bg-gray-200 transition-colors text-xs font-medium text-black bg-white rounded-full pt-1.5 pr-3 pb-1.5 pl-3">Começar</a>
         </div>
       </div>
@@ -1062,40 +1061,73 @@
     }
 
     // DROPDOWN FUNCTIONALITY
-    document.addEventListener('DOMContentLoaded', function() {
-      initApp();
-
-      const dropdowns = document.querySelectorAll('.dropdown');
-      
-      dropdowns.forEach(dropdown => {
-        const toggle = dropdown.querySelector('.dropdown-toggle');
+    
+      document.addEventListener('DOMContentLoaded', function() {
+        const dropdowns = document.querySelectorAll('.dropdown');
+        let closeTimeout;
         
-        toggle.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
+        dropdowns.forEach(dropdown => {
+          const toggle = dropdown.querySelector('.dropdown-toggle');
           
-          const isActive = dropdown.classList.contains('active');
+          // Abrir no click
+          toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Limpar timeout se existir
+            if (closeTimeout) {
+              clearTimeout(closeTimeout);
+            }
+            
+            const isActive = dropdown.classList.contains('active');
+            
+            // Fechar todos
+            dropdowns.forEach(d => d.classList.remove('active'));
+            
+            // Abrir o clicado se não estava ativo
+            if (!isActive) {
+              dropdown.classList.add('active');
+            }
+          });
           
-          dropdowns.forEach(d => d.classList.remove('active'));
+          // Hover: cancelar fechamento
+          dropdown.addEventListener('mouseenter', function() {
+            if (closeTimeout) {
+              clearTimeout(closeTimeout);
+            }
+          });
           
-          if (!isActive) {
-            dropdown.classList.add('active');
+          // Mouse sai: agendar fechamento em 5 segundos
+          dropdown.addEventListener('mouseleave', function() {
+            closeTimeout = setTimeout(() => {
+              dropdown.classList.remove('active');
+            }, 5000); // 5 segundos
+          });
+        });
+        
+        // Fechar ao clicar fora
+        document.addEventListener('click', function(e) {
+          if (!e.target.closest('.dropdown')) {
+            if (closeTimeout) {
+              clearTimeout(closeTimeout);
+            }
+            dropdowns.forEach(dropdown => {
+              dropdown.classList.remove('active');
+            });
           }
         });
-        
-        dropdown.addEventListener('mouseleave', function() {
-          dropdown.classList.remove('active');
-        });
       });
-      
-      document.addEventListener('click', function(e) {
-        if (!e.target.closest('.dropdown')) {
-          dropdowns.forEach(dropdown => {
-            dropdown.classList.remove('active');
+
+      // Logo navigation
+      document.addEventListener('DOMContentLoaded', function() {
+        const logo = document.querySelector('.neon-logo');
+        if (logo) {
+          logo.style.cursor = 'pointer';
+          logo.parentElement.addEventListener('click', function() {
+            window.location.href = '/';
           });
         }
       });
-    });
 
     // GRÁFICO INTERATIVO COM TOOLTIP
     document.addEventListener('DOMContentLoaded', function() {

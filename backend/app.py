@@ -1,11 +1,34 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 import yfinance as yf
+import psycopg2
 import os
 from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
+
+# Configuração do banco LOCAL
+def get_local_db_connection():
+    """Conecta no PostgreSQL (local ou produção)"""
+    try:
+        # ✅ Se estiver no Render (produção), usa DATABASE_URL
+        if os.environ.get('DATABASE_URL'):
+            print("🌐 Conectando no banco de produção (Render)...")
+            return psycopg2.connect(os.environ.get('DATABASE_URL'))
+        else:
+            # ✅ Local (seu computador)
+            print("💻 Conectando no banco local...")
+            return psycopg2.connect(
+                host="localhost",
+                database="postgres",
+                user="postgres",
+                password="#geminii",
+                port="5432"
+            )
+    except Exception as e:
+        print(f"❌ Erro de conexão com banco: {e}")
+        raise
 
 # Função para buscar dados das ações
 def get_stock_data(symbol, period='1mo'):
@@ -50,276 +73,24 @@ def get_stock_data(symbol, period='1mo'):
         print(f"Erro ao buscar dados para {symbol}: {e}")
         return None
 
-# Rota principal - serve seu HTML atual
+# ROTAS PARA HTML
 @app.route('/')
 def index():
-    # Serve seu home.html que está em ../frontend/
     return send_from_directory('../frontend', 'home.html')
 
-# Rota para página de ações (serve o HTML inline temporariamente)
-@app.route('/acoes')
-def acoes():
-    # HTML da página de ações inline (temporário)
-    return '''
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ações - Geminii Tech</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-    .stock-card {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 16px;
-      transition: all 0.3s ease;
-    }
-    .stock-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(186, 57, 175, 0.2);
-    }
-    .positive { color: #10b981; }
-    .negative { color: #ef4444; }
-    .loading { animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-  </style>
-</head>
-<body class="bg-gradient-to-br from-gray-900 via-black to-purple-900 text-white min-h-screen">
-  
-  <header class="p-6 border-b border-white border-opacity-10">
-    <div class="max-w-6xl mx-auto flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <img src="https://app.geminii.com.br/wp-content/uploads/2025/06/logo.png" alt="Geminii" class="w-8 h-8">
-        <h1 class="text-2xl font-bold text-purple-400">Ações em Tempo Real</h1>
-      </div>
-      <a href="/" class="px-4 py-2 bg-purple-600 rounded-lg hover:bg-purple-700 transition-colors">
-        <i class="fas fa-home mr-2"></i>Home
-      </a>
-    </div>
-  </header>
+@app.route('/home.html')
+def home():
+    return send_from_directory('../frontend', 'home.html')
 
-  <div class="max-w-6xl mx-auto p-6">
-    
-    <div class="mb-8">
-      <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div class="flex gap-2">
-          <input 
-            id="stockInput" 
-            type="text" 
-            placeholder="Digite o código da ação (ex: PETR4)" 
-            class="px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-400"
-          >
-          <button id="addStockBtn" class="px-6 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
-            <i class="fas fa-plus mr-2"></i>Adicionar
-          </button>
-        </div>
-        
-        <button id="refreshBtn" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors">
-          <i class="fas fa-sync-alt mr-2"></i>Atualizar Dados
-        </button>
-      </div>
-    </div>
+@app.route('/monitor-basico.html')
+def monitor_basico():
+    return send_from_directory('../frontend', 'monitor-basico.html')
 
-    <div id="statusMsg" class="mb-6 p-4 rounded-lg hidden"></div>
-    <div id="stocksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+@app.route('/radar-setores.html')
+def radar_setores():
+    return send_from_directory('../frontend', 'radar-setores.html')
 
-    <div id="chartSection" class="mt-12 hidden">
-      <h2 class="text-2xl font-bold mb-6 text-center">Gráfico Detalhado</h2>
-      <div class="stock-card p-6">
-        <div class="flex justify-between items-center mb-4">
-          <h3 id="chartTitle" class="text-xl font-semibold"></h3>
-          <span id="chartPrice" class="text-2xl font-bold text-purple-400"></span>
-        </div>
-        <canvas id="stockChart" width="400" height="200"></canvas>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const API_BASE = '/api';
-    let currentChart = null;
-    const defaultStocks = ['PETR4', 'VALE3', 'ITUB4', 'BBDC4'];
-    let watchList = [...defaultStocks];
-    
-    const stocksGrid = document.getElementById('stocksGrid');
-    const stockInput = document.getElementById('stockInput');
-    const addStockBtn = document.getElementById('addStockBtn');
-    const refreshBtn = document.getElementById('refreshBtn');
-    const statusMsg = document.getElementById('statusMsg');
-    const chartSection = document.getElementById('chartSection');
-    
-    function showStatus(message, type = 'info') {
-      statusMsg.className = `mb-6 p-4 rounded-lg ${type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600'}`;
-      statusMsg.textContent = message;
-      statusMsg.classList.remove('hidden');
-      setTimeout(() => statusMsg.classList.add('hidden'), 3000);
-    }
-    
-    function formatCurrency(value) {
-      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-    }
-    
-    async function fetchStockData(symbol) {
-      try {
-        const response = await fetch(`${API_BASE}/stock/${symbol}`);
-        const data = await response.json();
-        return data.success ? data.data : null;
-      } catch (error) {
-        console.error('Erro ao buscar ação:', error);
-        return null;
-      }
-    }
-    
-    function createStockCard(stockData) {
-      const isPositive = stockData.change >= 0;
-      const changeClass = isPositive ? 'positive' : 'negative';
-      const changeIcon = isPositive ? 'fa-arrow-up' : 'fa-arrow-down';
-      
-      return `
-        <div class="stock-card p-6 cursor-pointer" onclick="showChart('${stockData.symbol}')">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h3 class="text-xl font-bold">${stockData.symbol}</h3>
-              <p class="text-gray-400 text-sm">${stockData.last_update}</p>
-            </div>
-            <button onclick="removeStock('${stockData.symbol}', event)" class="text-red-400 hover:text-red-300">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-          
-          <div class="space-y-3">
-            <div>
-              <span class="text-3xl font-bold text-purple-400">${formatCurrency(stockData.current_price)}</span>
-            </div>
-            
-            <div class="flex items-center gap-2">
-              <i class="fas ${changeIcon} ${changeClass}"></i>
-              <span class="${changeClass} font-semibold">
-                ${formatCurrency(Math.abs(stockData.change))} (${Math.abs(stockData.change_percent).toFixed(2)}%)
-              </span>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white border-opacity-10">
-              <div>
-                <p class="text-gray-400 text-xs">Volume</p>
-                <p class="font-semibold">${stockData.volume.toLocaleString('pt-BR')}</p>
-              </div>
-              <div>
-                <p class="text-gray-400 text-xs">Dados</p>
-                <p class="font-semibold">${stockData.chart_data.length} pontos</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-    
-    async function updateStocksGrid() {
-      stocksGrid.innerHTML = '<div class="col-span-full text-center loading text-2xl">📊 Carregando ações...</div>';
-      
-      const stocksData = [];
-      for (const symbol of watchList) {
-        const data = await fetchStockData(symbol);
-        if (data) stocksData.push(data);
-      }
-      
-      if (stocksData.length === 0) {
-        stocksGrid.innerHTML = '<div class="col-span-full text-center text-gray-400">❌ Nenhuma ação encontrada</div>';
-        return;
-      }
-      
-      stocksGrid.innerHTML = stocksData.map(createStockCard).join('');
-      showStatus(`✅ ${stocksData.length} ações carregadas!`, 'success');
-    }
-    
-    function addStock() {
-      const symbol = stockInput.value.trim().toUpperCase();
-      if (!symbol) {
-        showStatus('❌ Digite o código de uma ação', 'error');
-        return;
-      }
-      if (watchList.includes(symbol)) {
-        showStatus('⚠️ Ação já está na lista', 'error');
-        return;
-      }
-      watchList.push(symbol);
-      stockInput.value = '';
-      showStatus(`✅ ${symbol} adicionada!`, 'success');
-      updateStocksGrid();
-    }
-    
-    function removeStock(symbol, event) {
-      event.stopPropagation();
-      watchList = watchList.filter(s => s !== symbol);
-      showStatus(`🗑️ ${symbol} removida`, 'success');
-      updateStocksGrid();
-    }
-    
-    async function showChart(symbol) {
-      const data = await fetchStockData(symbol);
-      if (!data) return;
-      
-      chartSection.classList.remove('hidden');
-      document.getElementById('chartTitle').textContent = `${symbol} - Últimos 30 dias`;
-      document.getElementById('chartPrice').textContent = formatCurrency(data.current_price);
-      
-      const ctx = document.getElementById('stockChart').getContext('2d');
-      if (currentChart) currentChart.destroy();
-      
-      currentChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: data.chart_data.map(d => d.date),
-          datasets: [{
-            label: 'Preço de Fechamento',
-            data: data.chart_data.map(d => d.price),
-            borderColor: '#ba39af',
-            backgroundColor: 'rgba(186, 57, 175, 0.1)',
-            borderWidth: 2,
-            fill: true,
-            tension: 0.4
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { labels: { color: 'white' } } },
-          scales: {
-            x: { ticks: { color: 'white' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-            y: { 
-              ticks: { 
-                color: 'white',
-                callback: function(value) { return formatCurrency(value); }
-              },
-              grid: { color: 'rgba(255,255,255,0.1)' }
-            }
-          }
-        }
-      });
-      
-      chartSection.scrollIntoView({ behavior: 'smooth' });
-    }
-    
-    addStockBtn.addEventListener('click', addStock);
-    refreshBtn.addEventListener('click', updateStocksGrid);
-    stockInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addStock();
-    });
-    
-    // Inicializar
-    updateStocksGrid();
-    setInterval(updateStocksGrid, 120000); // Auto refresh 2min
-  </script>
-</body>
-</html>
-    '''
-
-# APIs
+# ROTAS DA API - AÇÕES
 @app.route('/api/stock/<symbol>')
 def get_stock(symbol):
     data = get_stock_data(symbol)
@@ -339,6 +110,149 @@ def get_stocks():
             results[symbol] = data
     return jsonify({'success': True, 'data': results})
 
+# ROTAS DA API - SETORES
+@app.route('/api/setores')
+def get_setores():
+    """Lista todos os setores com quantidade de empresas"""
+    try:
+        print("🔍 Conectando no banco para buscar setores...")
+        conn = get_local_db_connection()
+        cursor = conn.cursor()
+        
+        # Primeiro verificar se a tabela existe
+        cursor.execute("""
+            SELECT EXISTS (
+                SELECT FROM information_schema.tables 
+                WHERE table_name = 'setor_b3'
+            );
+        """)
+        
+        table_exists = cursor.fetchone()[0]
+        if not table_exists:
+            cursor.close()
+            conn.close()
+            return jsonify({'success': False, 'error': 'Tabela setor_b3 não encontrada'}), 404
+        
+        # Buscar setores
+        cursor.execute("""
+            SELECT 
+                setor_economico,
+                COUNT(*) as total_empresas
+            FROM setor_b3 
+            GROUP BY setor_economico 
+            ORDER BY total_empresas DESC
+        """)
+        
+        setores = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        
+        result = []
+        for setor in setores:
+            result.append({
+                'setor_economico': setor[0],
+                'total_empresas': setor[1]
+            })
+        
+        print(f"✅ Encontrados {len(result)} setores")
+        
+        return jsonify({
+            'success': True, 
+            'data': result,
+            'total_setores': len(result)
+        })
+        
+    except Exception as e:
+        print(f"❌ Erro na API setores: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/setor/<setor_nome>')
+def get_empresas_setor(setor_nome):
+    """Buscar empresas por setor"""
+    try:
+        print(f"🔍 Buscando empresas do setor: {setor_nome}")
+        conn = get_local_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT acao, ticker, setor_economico, nivel_na_bolsa, tipo
+            FROM setor_b3 
+            WHERE setor_economico ILIKE %s 
+            ORDER BY acao
+            LIMIT 10
+        """, (f'%{setor_nome}%',))
+        
+        empresas = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        
+        result = []
+        for empresa in empresas:
+            result.append({
+                'empresa': empresa[0],  # acao
+                'ticker': empresa[1],
+                'setor_economico': empresa[2],
+                'nivel_bolsa': empresa[3],
+                'tipo_governanca': empresa[4]
+            })
+        
+        print(f"✅ Encontradas {len(result)} empresas")
+        
+        return jsonify({
+            'success': True, 
+            'data': result,
+            'total_empresas': len(result),
+            'setor': setor_nome
+        })
+        
+    except Exception as e:
+        print(f"❌ Erro ao buscar empresas do setor {setor_nome}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/empresa/<ticker>')
+def get_empresa_info(ticker):
+    """Buscar informações completas de uma empresa"""
+    try:
+        print(f"🔍 Buscando informações da empresa: {ticker}")
+        conn = get_local_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT id, setor_economico, setor, setor_puro, segmento, acao, ticker, nivel_na_bolsa, tipo
+            FROM setor_b3 
+            WHERE ticker = %s
+        """, (ticker.upper(),))
+        
+        empresa = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        
+        if empresa:
+            return jsonify({
+                'success': True, 
+                'data': {
+                    'id': empresa[0],
+                    'setor_economico': empresa[1],
+                    'setor': empresa[2],
+                    'setor_puro': empresa[3],
+                    'segmento': empresa[4],
+                    'empresa': empresa[5],  # acao
+                    'ticker': empresa[6],
+                    'nivel_bolsa': empresa[7],
+                    'tipo_governanca': empresa[8]
+                }
+            })
+        else:
+            return jsonify({
+                'success': False, 
+                'error': 'Empresa não encontrada'
+            }), 404
+            
+    except Exception as e:
+        print(f"❌ Erro ao buscar empresa {ticker}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# ROTAS DA API - UTILITÁRIAS
 @app.route('/api/status')
 def status():
     return jsonify({
@@ -367,6 +281,44 @@ def backtest():
         'sharpe_ratio': 1.85
     })
 
+# ROTA DE TESTE DO BANCO
+@app.route('/api/test-db')
+def test_db():
+    """Rota para testar conexão com banco"""
+    try:
+        conn = get_local_db_connection()
+        cursor = conn.cursor()
+        
+        # Testar conexão
+        cursor.execute("SELECT version();")
+        version = cursor.fetchone()[0]
+        
+        # Contar registros
+        cursor.execute("SELECT COUNT(*) FROM setor_b3;")
+        total = cursor.fetchone()[0]
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'postgres_version': version,
+            'total_empresas': total,
+            'message': 'Banco funcionando!'
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
+    print("🚀 Iniciando Geminii API...")
+    print("📊 APIs disponíveis:")
+    print("  - /api/setores")
+    print("  - /api/setor/<nome>")
+    print("  - /api/empresa/<ticker>")
+    print("  - /api/test-db")
     app.run(host='0.0.0.0', port=port, debug=True)
