@@ -48,16 +48,6 @@
       border-color: rgba(186, 57, 175, 0.3);
     }
     
-    .setor-point {
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .setor-point:hover {
-      transform: scale(1.5);
-      filter: drop-shadow(0 0 10px #ba39af);
-    }
-    
     .loading {
       opacity: 0.6;
       pointer-events: none;
@@ -91,7 +81,7 @@
     
     .setor-stats {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 16px;
       margin-top: 24px;
     }
@@ -134,10 +124,6 @@
       overflow: hidden;
     }
     
-    .empresas-section .space-y-2 > * + * {
-      margin-top: 8px;
-    }
-    
     .empresa-item {
       transition: all 0.3s ease;
     }
@@ -147,18 +133,34 @@
       transform: translateX(4px);
     }
     
-    .loading-pulse {
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
-    }
-
     .card-highlight {
       box-shadow: 0 0 20px rgba(186, 57, 175, 0.5) !important;
       border-color: rgba(186, 57, 175, 0.6) !important;
+    }
+
+    .empresas-scroll {
+      max-height: 400px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(186, 57, 175, 0.5) transparent;
+    }
+
+    .empresas-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .empresas-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+    }
+
+    .empresas-scroll::-webkit-scrollbar-thumb {
+      background: rgba(186, 57, 175, 0.5);
+      border-radius: 3px;
+    }
+
+    .empresas-scroll::-webkit-scrollbar-thumb:hover {
+      background: rgba(186, 57, 175, 0.7);
     }
 
   </style>
@@ -205,7 +207,7 @@
             <span class="text-white font-light">de Setores</span>
           </h1>
           <p class="text-neutral-300 text-lg max-w-2xl mx-auto">
-            Análise de volatilidade vs performance por setor econômico da B3. Identifique oportunidades e riscos setoriais.
+            Análise RSL vs Volatilidade por setor econômico da B3. Dados reais baseados no MetaTrader.
           </p>
         </div>
 
@@ -214,15 +216,15 @@
           <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div class="flex gap-3 flex-wrap">
               <select id="periodoSelect" class="px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white focus:outline-none focus:border-geminii backdrop-blur-sm">
-                <option value="30">Período: 30 dias</option>
-                <option value="60">Período: 60 dias</option>
-                <option value="90">Período: 90 dias</option>
-                <option value="180">Período: 6 meses</option>
+                <option value="1mo">Período: 1 mês</option>
+                <option value="3mo">Período: 3 meses</option>
+                <option value="6mo">Período: 6 meses</option>
+                <option value="1y" selected>Período: 1 ano</option>
               </select>
               
               <select id="metricaSelect" class="px-4 py-2 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg text-white focus:outline-none focus:border-geminii backdrop-blur-sm">
-                <option value="rsl">RSL vs Volatilidade</option>
-                <option value="retorno">Retorno vs Volatilidade</option>
+                <option value="rsl" selected>RSL vs Volatilidade</option>
+                <option value="performance">Performance vs Volatilidade</option>
               </select>
             </div>
             
@@ -244,7 +246,7 @@
         <!-- Gráfico Principal -->
         <div class="radar-card p-6 mb-8">
           <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-white">Mapa Setorial</h2>
+            <h2 class="text-2xl font-bold text-white">Mapa Setorial - RSL Real</h2>
             <div class="text-sm text-gray-400">
               <span id="totalSetores">0</span> setores • <span id="totalEmpresas">0</span> empresas
             </div>
@@ -256,29 +258,29 @@
             <!-- Quadrant Labels -->
             <div class="quadrant-label" style="top: 20px; left: 20px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981;">
               <i class="fas fa-gem"></i> IDEAL<br>
-              <small style="font-size: 10px; opacity: 0.8;">Alta Performance • Baixo Risco</small>
+              <small style="font-size: 10px; opacity: 0.8;">Alto RSL • Baixa Volatilidade</small>
             </div>
 
             <div class="quadrant-label" style="top: 20px; right: 20px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #f59e0b;">
               <i class="fas fa-rocket"></i> AGRESSIVO<br>
-              <small style="font-size: 10px; opacity: 0.8;">Alta Performance • Alto Risco</small>
+              <small style="font-size: 10px; opacity: 0.8;">Alto RSL • Alta Volatilidade</small>
             </div>
 
             <div class="quadrant-label" style="bottom: 20px; left: 20px; background: rgba(107, 114, 128, 0.1); border: 1px solid rgba(107, 114, 128, 0.3); color: #9ca3af;">
               <i class="fas fa-shield-alt"></i> DEFENSIVO<br>
-              <small style="font-size: 10px; opacity: 0.8;">Baixa Performance • Baixo Risco</small>
+              <small style="font-size: 10px; opacity: 0.8;">Baixo RSL • Baixa Volatilidade</small>
             </div>
 
             <div class="quadrant-label" style="bottom: 20px; right: 20px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171;">
               <i class="fas fa-exclamation-triangle"></i> RISCO<br>
-              <small style="font-size: 10px; opacity: 0.8;">Baixa Performance • Alto Risco</small>
+              <small style="font-size: 10px; opacity: 0.8;">Baixo RSL • Alta Volatilidade</small>
             </div>
           </div>
         </div>
 
         <!-- Estatísticas por Setor -->
         <div class="radar-card p-6">
-          <h2 class="text-2xl font-bold text-white mb-6">Estatísticas Detalhadas</h2>
+          <h2 class="text-2xl font-bold text-white mb-6">Estatísticas Detalhadas - RSL Real</h2>
           <div id="setorStats" class="setor-stats">
             <!-- Cards de estatísticas serão inseridos aqui -->
           </div>
@@ -323,7 +325,7 @@
       setTimeout(() => statusMsg.classList.add('hidden'), 4000);
     }
     
-    // ✅ FUNÇÃO CORRIGIDA: Buscar todos os setores do banco
+    // ✅ NOVA FUNÇÃO: Buscar setores do banco
     async function fetchAllSetores() {
       try {
         showStatus('Conectando com banco de dados...', 'info');
@@ -331,16 +333,9 @@
         const data = await response.json();
         
         if (data.success && data.data) {
-          // Mapear campos corretos do seu banco
           allSetoresFromDB = data.data.map(item => ({
-            id: item.id,
-            setor_economico: item.setor || item.setor_economico, // Campo correto
-            setor_puro: item.setor_puro,
-            segmento: item.segmento,
-            empresa: item.acao, // Campo correto 
-            ticker: item.ticker,
-            nivel_bolsa: item.nivel_na_bolsa,
-            tipo: item.tipo
+            setor_economico: item.setor_economico,
+            total_empresas: item.total_empresas
           }));
           
           console.log('✅ Setores carregados:', allSetoresFromDB.length);
@@ -355,60 +350,46 @@
       }
     }
     
-    // ✅ FUNÇÃO CORRIGIDA: Buscar empresas de um setor específico
-    async function fetchEmpresasDoSetor(nomeSetor) {
+    // ✅ NOVA FUNÇÃO: Calcular RSL de um setor usando a nova API
+    async function fetchSetorRSL(nomeSetor) {
       try {
-        showStatus(`Carregando empresas de ${nomeSetor}...`, 'info');
+        console.log(`📊 Calculando RSL para setor: ${nomeSetor}`);
         
-        // Usar o mesmo endpoint mas com campo correto
-        const response = await fetch(`${API_BASE}/setor/${encodeURIComponent(nomeSetor)}`);
+        const response = await fetch(`${API_BASE}/rsl-setor/${encodeURIComponent(nomeSetor)}`);
         const data = await response.json();
         
-        if (data.success && data.data && data.data.length > 0) {
-          console.log(`📊 Encontradas ${data.data.length} empresas para ${nomeSetor}`);
+        if (data.success && data.data) {
+          const setorData = data.data;
           
-          // Processar empresas com cotação
-          const empresasComCotacao = await Promise.all(
-            data.data.slice(0, 8).map(async (item) => {
-              try {
-                const cotacaoResponse = await fetch(`${API_BASE}/stock/${item.ticker}`);
-                const cotacaoData = await cotacaoResponse.json();
-                
-                return {
-                  ticker: item.ticker,
-                  nome: item.acao || item.empresa, // Campo correto
-                  setor: item.setor || item.setor_economico,
-                  segmento: item.segmento,
-                  preco: cotacaoData.success ? cotacaoData.data.current_price : Math.random() * 50 + 10,
-                  variacao: cotacaoData.success ? cotacaoData.data.change_percent : (Math.random() - 0.5) * 6
-                };
-              } catch (error) {
-                console.warn(`📊 Simulando dados para ${item.ticker}`);
-                return {
-                  ticker: item.ticker,
-                  nome: item.acao || item.empresa,
-                  setor: item.setor || item.setor_economico,
-                  segmento: item.segmento,
-                  preco: Math.random() * 50 + 10,
-                  variacao: (Math.random() - 0.5) * 6
-                };
-              }
-            })
-          );
+          console.log(`✅ RSL calculado para ${nomeSetor}:`, {
+            rsl: setorData.rsl,
+            volatilidade: setorData.volatilidade,
+            empresas_com_dados: setorData.empresas_com_dados
+          });
           
-          return empresasComCotacao;
+          return {
+            setor: nomeSetor,
+            rsl: setorData.rsl,
+            volatilidade: setorData.volatilidade,
+            empresas_com_dados: setorData.empresas_com_dados,
+            total_empresas: setorData.total_empresas,
+            taxa_sucesso: setorData.taxa_sucesso,
+            has_real_data: setorData.has_real_data,
+            detalhes_empresas: setorData.detalhes_empresas || []
+          };
         } else {
-          throw new Error(`Nenhuma empresa encontrada para ${nomeSetor}`);
+          console.warn(`⚠️ Falha ao calcular RSL para ${nomeSetor}: ${data.error}`);
+          return null;
         }
+        
       } catch (error) {
-        console.error('❌ Erro ao buscar empresas:', error);
-        showStatus('❌ Erro ao carregar empresas', 'error');
-        return [];
+        console.error(`❌ Erro ao buscar RSL do setor ${nomeSetor}:`, error);
+        return null;
       }
     }
     
-    // ✅ FUNÇÃO CORRIGIDA: Gerar dados dos setores
-    async function generateSetorDataFromDB() {
+    // ✅ NOVA FUNÇÃO: Gerar dados dos setores com RSL REAL
+    async function generateSetorDataWithRealRSL() {
       const setoresDB = await fetchAllSetores();
       
       if (setoresDB.length === 0) {
@@ -416,58 +397,65 @@
         return [];
       }
       
-      // Agrupar por setor econômico
-      const setoresAgrupados = {};
+      const setoresArray = [];
+      let setoresComDados = 0;
       
-      setoresDB.forEach((item, index) => {
-        const nomeSetor = item.setor_economico;
+      for (let i = 0; i < setoresDB.length; i++) {
+        const setorDB = setoresDB[i];
         
-        if (!nomeSetor) {
-          console.warn(`⚠️ Setor sem nome no índice ${index}:`, item);
-          return;
-        }
+        showStatus(`Calculando RSL: ${setorDB.setor_economico} (${i + 1}/${setoresDB.length})...`, 'info');
         
-        if (!setoresAgrupados[nomeSetor]) {
-          setoresAgrupados[nomeSetor] = {
-            id: Object.keys(setoresAgrupados).length,
-            nome: nomeSetor,
-            empresas: 0,
-            tickers: [],
-            segmentos: new Set()
-          };
-        }
+        // ✅ BUSCAR RSL REAL DO SETOR
+        const rslData = await fetchSetorRSL(setorDB.setor_economico);
         
-        setoresAgrupados[nomeSetor].empresas++;
-        setoresAgrupados[nomeSetor].tickers.push(item.ticker);
-        if (item.segmento) {
-          setoresAgrupados[nomeSetor].segmentos.add(item.segmento);
+        if (rslData) {
+          setoresArray.push({
+            id: i,
+            setor: setorDB.setor_economico,
+            rsl: rslData.rsl,  // ✅ RSL REAL CALCULADO
+            volatilidade: rslData.volatilidade,  // ✅ VOLATILIDADE REAL
+            empresas: setorDB.total_empresas,
+            empresas_com_dados: rslData.empresas_com_dados,
+            taxa_sucesso: rslData.taxa_sucesso,
+            has_real_data: rslData.has_real_data,
+            detalhes_empresas: rslData.detalhes_empresas,
+            cor: coresSetores[i % coresSetores.length]
+          });
+          
+          setoresComDados++;
+          
+          console.log(`✅ ${setorDB.setor_economico}: RSL=${rslData.rsl}%, Vol=${rslData.volatilidade}%`);
+        } else {
+          // Se falhar, usar dados simulados como fallback
+          console.warn(`⚠️ Usando dados simulados para ${setorDB.setor_economico}`);
+          
+          setoresArray.push({
+            id: i,
+            setor: setorDB.setor_economico,
+            rsl: (Math.random() - 0.5) * 20,
+            volatilidade: Math.random() * 25 + 15,
+            empresas: setorDB.total_empresas,
+            empresas_com_dados: 0,
+            taxa_sucesso: 0,
+            has_real_data: false,
+            detalhes_empresas: [],
+            cor: coresSetores[i % coresSetores.length]
+          });
         }
-      });
+      }
       
-      // Converter para array com métricas simuladas
-      const setoresArray = Object.values(setoresAgrupados).map((setor, index) => ({
-        id: setor.id,
-        setor: setor.nome,
-        rsl: (Math.random() - 0.5) * 20, // RSL entre -10% e +10%
-        volatilidade: Math.random() * 30 + 10, // Volatilidade entre 10% e 40%
-        retorno: (Math.random() - 0.5) * 15, // Retorno similar
-        empresas: setor.empresas,
-        tickers: setor.tickers,
-        segmentos: Array.from(setor.segmentos),
-        cor: coresSetores[index % coresSetores.length]
-      }));
-      
-      console.log('✅ Setores processados:', setoresArray.length);
+      console.log(`✅ Processamento concluído: ${setoresComDados}/${setoresDB.length} setores com RSL real`);
       return setoresArray;
     }
     
-    // Buscar dados dos setores
+    // ✅ FUNÇÃO ATUALIZADA: Buscar dados dos setores
     async function fetchSetoresData() {
       try {
         const periodo = periodoSelect.value;
-        showStatus(`Processando dados dos setores (${periodo} dias)...`, 'info');
+        showStatus(`Calculando RSL real dos setores (${periodo})...`, 'info');
         
-        setoresData = await generateSetorDataFromDB();
+        // ✅ USAR RSL REAL
+        setoresData = await generateSetorDataWithRealRSL();
         
         if (setoresData.length === 0) {
           throw new Error('Nenhum setor processado');
@@ -476,7 +464,9 @@
         totalSetores.textContent = setoresData.length;
         totalEmpresas.textContent = setoresData.reduce((sum, s) => sum + s.empresas, 0);
         
-        showStatus(`✅ ${setoresData.length} setores processados com sucesso!`, 'success');
+        const setoresComDados = setoresData.filter(s => s.has_real_data).length;
+        
+        showStatus(`✅ ${setoresData.length} setores processados! ${setoresComDados} com RSL real.`, 'success');
         console.log('📊 Dados finais dos setores:', setoresData);
         
         return setoresData;
@@ -488,7 +478,7 @@
       }
     }
     
-    // ✅ FUNÇÃO CORRIGIDA: Criar gráfico de radar
+    // ✅ FUNÇÃO ATUALIZADA: Criar gráfico com RSL
     function createRadarChart(data) {
       const ctx = document.getElementById('radarChart').getContext('2d');
       
@@ -497,16 +487,20 @@
       }
       
       const metrica = metricaSelect.value;
-      const yAxisLabel = metrica === 'rsl' ? 'RSL (%)' : 'Retorno (%)';
+      const xAxisLabel = metrica === 'rsl' ? 'RSL (%)' : 'Performance (%)';
+      const yAxisLabel = 'Volatilidade (%)';
       
       const datasets = [{
         label: 'Setores',
         data: data.map(setor => ({
-          x: metrica === 'rsl' ? setor.rsl : setor.retorno,
+          x: metrica === 'rsl' ? setor.rsl : (setor.rsl || 0), // Usar RSL para ambos por enquanto
           y: setor.volatilidade,
           setor: setor.setor,
           empresas: setor.empresas,
-          setorId: setor.id // ✅ ADICIONAR ID PARA REFERÊNCIA
+          empresasComDados: setor.empresas_com_dados,
+          hasRealData: setor.has_real_data,
+          taxaSucesso: setor.taxa_sucesso,
+          setorId: setor.id
         })),
         backgroundColor: data.map(setor => setor.cor + '80'),
         borderColor: data.map(setor => setor.cor),
@@ -540,9 +534,12 @@
                 label: function(context) {
                   const point = context.raw;
                   return [
-                    `${yAxisLabel}: ${point.x.toFixed(2)}%`,
+                    `${xAxisLabel}: ${point.x.toFixed(2)}%`,
                     `Volatilidade: ${point.y.toFixed(2)}%`,
-                    `Empresas: ${point.empresas}`
+                    `Empresas: ${point.empresas}`,
+                    `Com dados RSL: ${point.empresasComDados}`,
+                    `Taxa sucesso: ${point.taxaSucesso}%`,
+                    `Dados: ${point.hasRealData ? 'RSL Real' : 'Simulados'}`
                   ];
                 }
               }
@@ -552,7 +549,7 @@
             x: {
               title: {
                 display: true,
-                text: yAxisLabel,
+                text: xAxisLabel,
                 color: 'white',
                 font: { size: 14, weight: 'bold' }
               },
@@ -575,7 +572,7 @@
             y: {
               title: {
                 display: true,
-                text: 'Volatilidade (%)',
+                text: yAxisLabel,
                 color: 'white',
                 font: { size: 14, weight: 'bold' }
               },
@@ -601,16 +598,12 @@
               const element = elements[0];
               const setorData = currentChart.data.datasets[0].data[element.index];
               
-              // ✅ BUSCAR SETOR PELO ID
               const setor = setoresData.find(s => s.id === setorData.setorId);
               
               if (setor) {
                 console.log('🎯 Clicou no setor:', setor.setor);
-                
-                // Expandir o card correspondente
                 toggleSetorExpansion(setor.id);
                 
-                // Scroll até o card
                 const cardElement = document.getElementById(`card-${setor.id}`);
                 if (cardElement) {
                   cardElement.scrollIntoView({ 
@@ -618,7 +611,6 @@
                     block: 'center' 
                   });
                   
-                  // Destacar o card por 3 segundos
                   cardElement.classList.add('card-highlight');
                   setTimeout(() => {
                     cardElement.classList.remove('card-highlight');
@@ -631,7 +623,7 @@
       });
     }
     
-    // ✅ FUNÇÃO CORRIGIDA: Expandir/contrair setor
+    // ✅ FUNÇÃO ATUALIZADA: Expandir setor com dados RSL
     async function toggleSetorExpansion(setorId) {
       const empresasSection = document.getElementById(`empresas-${setorId}`);
       const chevron = document.getElementById(`chevron-${setorId}`);
@@ -652,19 +644,9 @@
       } else {
         // Expandir
         chevron.style.transform = 'rotate(180deg)';
-        
-        // Mostrar loading
-        empresasList.innerHTML = `
-          <div class="flex items-center justify-center py-6">
-            <div class="spinner mr-3"></div>
-            <span class="text-gray-400 text-sm">Carregando empresas...</span>
-          </div>
-        `;
-        
         empresasSection.style.maxHeight = '100px';
         
         try {
-          // ✅ BUSCAR SETOR PELO ID CORRETO
           const setor = setoresData.find(s => s.id === setorId);
           
           if (!setor) {
@@ -673,36 +655,88 @@
           
           console.log('📂 Expandindo setor:', setor.setor);
           
-          const empresas = await fetchEmpresasDoSetor(setor.setor);
-          
-          if (empresas.length === 0) {
-            throw new Error('Nenhuma empresa encontrada');
+          // ✅ USAR DADOS RSL JÁ CALCULADOS
+          if (setor.detalhes_empresas && setor.detalhes_empresas.length > 0) {
+            // Usar dados que já temos
+            const empresas = setor.detalhes_empresas;
+            
+            let empresasHTML = `
+              <div class="mb-4">
+                <h5 class="text-xs font-semibold text-green-400 mb-2 flex items-center gap-2">
+                  <i class="fas fa-chart-line"></i>
+                  Empresas com RSL Calculado (${empresas.length})
+                </h5>
+                <div class="space-y-2">
+                  ${empresas.map(empresa => `
+                    <div class="empresa-item flex items-center justify-between p-3 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 transition-all cursor-pointer">
+                      <div class="flex items-center gap-3">
+                        <div class="w-2 h-2 rounded-full" style="background-color: ${setor.cor}"></div>
+                        <div>
+                          <span class="text-white font-medium text-sm">${empresa.symbol}</span>
+                          <div class="text-gray-400 text-xs">RSL: ${empresa.rsl}% | Vol: ${empresa.volatilidade}%</div>
+                          <div class="text-gray-500 text-xs">MM(30): R$ ${empresa.mm_30}</div>
+                        </div>
+                      </div>
+                      <div class="text-right">
+                        <div class="text-sm font-bold text-white">R$ ${empresa.close_atual}</div>
+                        <div class="text-xs ${empresa.rsl >= 0 ? 'text-green-400' : 'text-red-400'}">
+                          RSL: ${empresa.rsl >= 0 ? '+' : ''}${empresa.rsl}%
+                        </div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            `;
+            
+            empresasList.innerHTML = `<div class="empresas-scroll">${empresasHTML}</div>`;
+            
+          } else {
+            // Buscar empresas do banco se não tiver dados RSL
+            showStatus(`Carregando empresas de ${setor.setor}...`, 'info');
+            
+            const response = await fetch(`${API_BASE}/setor/${encodeURIComponent(setor.setor)}`);
+            const data = await response.json();
+            
+            if (data.success && data.data && data.data.length > 0) {
+              const empresas = data.data;
+              
+              let empresasHTML = `
+                <div class="mb-4">
+                  <h5 class="text-xs font-semibold text-gray-400 mb-2 flex items-center gap-2">
+                    <i class="fas fa-building"></i>
+                    Empresas do Setor (${empresas.length})
+                  </h5>
+                  <div class="space-y-2">
+                    ${empresas.map(empresa => `
+                      <div class="empresa-item flex items-center justify-between p-2 rounded-lg bg-white bg-opacity-3 hover:bg-opacity-5 transition-all cursor-pointer">
+                        <div class="flex items-center gap-3">
+                          <div class="w-2 h-2 rounded-full bg-gray-500"></div>
+                          <div>
+                            <span class="text-gray-300 font-medium text-sm">${empresa.ticker}</span>
+                            <div class="text-gray-500 text-xs">${empresa.empresa || empresa.acao}</div>
+                            ${empresa.segmento ? `<div class="text-gray-600 text-xs">${empresa.segmento}</div>` : ''}
+                          </div>
+                        </div>
+                        <div class="text-right">
+                          <div class="text-xs text-gray-500">RSL não calculado</div>
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              `;
+              
+              empresasList.innerHTML = `<div class="empresas-scroll">${empresasHTML}</div>`;
+            } else {
+              throw new Error('Nenhuma empresa encontrada');
+            }
           }
           
-          // Criar lista de empresas
-          empresasList.innerHTML = empresas.map(empresa => `
-            <div class="empresa-item flex items-center justify-between p-3 rounded-lg bg-white bg-opacity-5 hover:bg-opacity-10 transition-all cursor-pointer">
-              <div class="flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full" style="background-color: ${setor.cor}"></div>
-                <div>
-                  <span class="text-white font-medium text-sm">${empresa.ticker}</span>
-                  <div class="text-gray-400 text-xs">${empresa.nome}</div>
-                  ${empresa.segmento ? `<div class="text-gray-500 text-xs">${empresa.segmento}</div>` : ''}
-                </div>
-              </div>
-              <div class="text-right">
-                <div class="text-sm font-bold text-white">R$ ${empresa.preco.toFixed(2)}</div>
-                <div class="text-xs ${empresa.variacao >= 0 ? 'text-green-400' : 'text-red-400'}">
-                  ${empresa.variacao >= 0 ? '+' : ''}${empresa.variacao.toFixed(2)}%
-                </div>
-              </div>
-            </div>
-          `).join('');
-          
           // Expandir com altura dinâmica
-          empresasSection.style.maxHeight = empresasSection.scrollHeight + 'px';
+          empresasSection.style.maxHeight = Math.min(empresasSection.scrollHeight, 450) + 'px';
           
-          showStatus(`✅ ${empresas.length} empresas carregadas para ${setor.setor}`, 'success');
+          showStatus(`✅ Dados carregados para ${setor.setor}`, 'success');
           
         } catch (error) {
           console.error('❌ Erro ao carregar empresas:', error);
@@ -720,7 +754,7 @@
       }
     }
     
-    // ✅ FUNÇÃO CORRIGIDA: Criar cards de estatísticas
+    // ✅ FUNÇÃO ATUALIZADA: Criar cards com dados RSL
     function createStatsCards(data) {
       const sortedData = [...data].sort((a, b) => b.rsl - a.rsl);
       
@@ -731,7 +765,10 @@
               ${setor.setor}
               <i class="fas fa-chevron-down transition-transform duration-300" id="chevron-${setor.id}"></i>
             </h3>
-            <div class="w-4 h-4 rounded-full" style="background-color: ${setor.cor}"></div>
+            <div class="flex items-center gap-2">
+              ${setor.has_real_data ? '<i class="fas fa-check-circle text-green-400 text-xs" title="RSL Real"></i>' : '<i class="fas fa-info-circle text-gray-400 text-xs" title="Dados Simulados"></i>'}
+              <div class="w-4 h-4 rounded-full" style="background-color: ${setor.cor}"></div>
+            </div>
           </div>
           
           <div class="grid grid-cols-2 gap-4 text-sm">
@@ -749,14 +786,24 @@
             
             <div>
               <span class="text-gray-400">Empresas</span>
-              <div class="font-bold text-white">${setor.empresas}</div>
+              <div class="font-bold text-white">
+                ${setor.empresas}
+                ${setor.empresas_com_dados > 0 ? `<span class="text-xs text-green-400 ml-1">(${setor.empresas_com_dados} com RSL)</span>` : ''}
+              </div>
             </div>
             
             <div>
-              <span class="text-gray-400">Score</span>
-              <div class="font-bold text-geminii">${(setor.rsl / setor.volatilidade * 100).toFixed(0)}</div>
+              <span class="text-gray-400">Score RSL</span>
+              <div class="font-bold text-geminii">${setor.volatilidade > 0 ? (setor.rsl / setor.volatilidade * 100).toFixed(0) : '0'}</div>
             </div>
           </div>
+          
+          <!-- Taxa de Sucesso -->
+          ${setor.has_real_data ? `
+            <div class="mt-2 text-xs text-gray-400">
+              Taxa de sucesso: ${setor.taxa_sucesso}% • Dados: ${setor.has_real_data ? 'Reais' : 'Simulados'}
+            </div>
+          ` : ''}
           
           <div class="progress-bar">
             <div class="progress-fill" style="width: ${Math.max(0, Math.min(100, (setor.rsl + 10) * 5))}%"></div>
@@ -766,8 +813,8 @@
           <div class="empresas-section mt-4" id="empresas-${setor.id}" style="max-height: 0;">
             <div class="border-t border-white border-opacity-20 pt-4">
               <h4 class="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-                <i class="fas fa-building text-geminii"></i>
-                Empresas do Setor (Top 8)
+                <i class="fas fa-chart-line text-geminii"></i>
+                ${setor.has_real_data ? 'Empresas com RSL Real' : 'Empresas do Setor'}
               </h4>
               <div id="empresas-list-${setor.id}" class="space-y-2">
                 <!-- Lista de empresas será carregada aqui -->
@@ -783,7 +830,7 @@
     // Atualizar dados
     async function atualizarDados() {
       atualizarBtn.classList.add('loading');
-      atualizarBtn.innerHTML = '<div class="spinner"></div> Carregando...';
+      atualizarBtn.innerHTML = '<div class="spinner"></div> Calculando RSL...';
       
       try {
         const data = await fetchSetoresData();
@@ -812,19 +859,19 @@
       }
       
       const csv = [
-        'Setor,RSL,Volatilidade,Retorno,Empresas',
-        ...setoresData.map(s => `${s.setor},${s.rsl.toFixed(2)},${s.volatilidade.toFixed(2)},${s.retorno.toFixed(2)},${s.empresas}`)
+        'Setor,RSL,Volatilidade,Empresas,EmpresasComRSL,TaxaSucesso,DadosReais',
+        ...setoresData.map(s => `${s.setor},${s.rsl.toFixed(2)},${s.volatilidade.toFixed(2)},${s.empresas},${s.empresas_com_dados},${s.taxa_sucesso},${s.has_real_data}`)
       ].join('\n');
       
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `radar-setores-${new Date().toISOString().split('T')[0]}.csv`;
+      a.download = `radar-setores-rsl-${new Date().toISOString().split('T')[0]}.csv`;
       a.click();
       window.URL.revokeObjectURL(url);
       
-      showStatus('✅ Dados exportados com sucesso!', 'success');
+      showStatus('✅ Dados RSL exportados com sucesso!', 'success');
     }
     
     // Event Listeners
@@ -839,19 +886,19 @@
     
     // Inicializar
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('🚀 Inicializando Radar de Setores...');
-      showStatus('Inicializando Radar de Setores...', 'info');
+      console.log('🚀 Inicializando Radar de Setores com RSL Real...');
+      showStatus('Inicializando cálculo de RSL real...', 'info');
       atualizarDados();
     });
     
-    // Auto-refresh a cada 5 minutos
-    setInterval(atualizarDados, 300000);
+    // Auto-refresh a cada 15 minutos (RSL demora mais para calcular)
+    setInterval(atualizarDados, 900000);
     
     // ✅ FUNÇÃO GLOBAL PARA EXPANSÃO
     window.toggleSetorExpansion = toggleSetorExpansion;
     
     // ✅ LOG DE DEBUG
-    console.log('🔧 Sistema inicializado com sucesso!');
+    console.log('🔧 Sistema RSL Real inicializado com sucesso!');
   </script>
 </body>
 </html>

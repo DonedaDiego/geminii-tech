@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro - Geminii Tech</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            dark: '#000000',
+            light: '#ffffff',
+            subtle: 'rgba(255,255,255,0.1)',
+            geminii: '#ba39af'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { 
+      font-family: 'Inter', sans-serif; 
+      overflow-x: hidden;
+    }
+    
+    .register-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px) brightness(0.9);
+      -webkit-backdrop-filter: blur(20px) brightness(0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .register-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(186, 57, 175, 0.15);
+      border-color: rgba(186, 57, 175, 0.3);
+    }
+    
+    .form-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .form-input:focus {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #ba39af;
+      box-shadow: 0 0 20px rgba(186, 57, 175, 0.3);
+      outline: none;
+    }
+    
+    .form-select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      color: white;
+    }
+    
+    .form-select:focus {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #ba39af;
+      box-shadow: 0 0 20px rgba(186, 57, 175, 0.3);
+      outline: none;
+    }
+    
+    .form-select option {
+      background: #1a1a1a;
+      color: white;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #ba39af 0%, #d946ef 100%);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(186, 57, 175, 0.4);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.6;
+      transform: none;
+      cursor: not-allowed;
+    }
+    
+    .spinner {
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 2px solid #ffffff;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .alert {
+      transition: all 0.3s ease;
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    
+    .alert.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .plan-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .plan-card:hover {
+      background: rgba(186, 57, 175, 0.1);
+      border-color: rgba(186, 57, 175, 0.3);
+      transform: translateY(-2px);
+    }
+    
+    .plan-card.selected {
+      background: rgba(186, 57, 175, 0.2);
+      border-color: #ba39af;
+      box-shadow: 0 0 20px rgba(186, 57, 175, 0.3);
+    }
+    
+    .password-strength {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+    
+    .strength-bar {
+      height: 100%;
+      transition: all 0.3s ease;
+      border-radius: 2px;
+    }
+    
+    .strength-weak { background: #ef4444; width: 33%; }
+    .strength-medium { background: #f59e0b; width: 66%; }
+    .strength-strong { background: #10b981; width: 100%; }
+
+    .floating-elements {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .floating-element {
+      position: absolute;
+      background: linear-gradient(135deg, rgba(186, 57, 175, 0.1), rgba(217, 70, 239, 0.1));
+      border-radius: 50%;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .floating-element:nth-child(1) {
+      width: 120px;
+      height: 120px;
+      top: 15%;
+      left: 5%;
+      animation-delay: 0s;
+    }
+
+    .floating-element:nth-child(2) {
+      width: 180px;
+      height: 180px;
+      top: 50%;
+      right: 5%;
+      animation-delay: 3s;
+    }
+
+    .floating-element:nth-child(3) {
+      width: 100px;
+      height: 100px;
+      bottom: 15%;
+      left: 15%;
+      animation-delay: 6s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+    }
+  </style>
+</head>
+<body class="bg-black text-white">
+  <div class="relative min-h-screen">
+    <!-- Spline 3D background -->
+    <div class="fixed inset-0 z-0">
+      <iframe src="https://my.spline.design/thresholddarkambientui-v0gkZCfi6zXm69kE0wccy70f/" frameborder="0" width="100%" height="100%" class="w-full h-full"></iframe>
+    </div>
+    
+    <!-- Floating elements -->
+    <div class="floating-elements">
+      <div class="floating-element"></div>
+      <div class="floating-element"></div>
+      <div class="floating-element"></div>
+    </div>
+    
+    <!-- Glass floating navbar -->
+    <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-opacity-5 border-opacity-10 bg-white border-white border rounded-full pt-4 pr-4 pb-4 pl-4 shadow-xl backdrop-blur-md">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <img src="https://app.geminii.com.br/wp-content/uploads/2025/06/logo.png" alt="Geminii Logo" class="w-6 h-6 cursor-pointer" onclick="window.location.href='/home.html'">
+        </div>
+        <div class="hidden md:flex items-center space-x-6 text-xs text-gray-300 ml-8">
+          <a href="/home.html" class="hover:text-white transition-colors">Home</a>
+          <a href="/monitor-basico.html" class="hover:text-white transition-colors">Scanner</a>
+          <a href="/radar-setores.html" class="hover:text-white transition-colors">Radar de Setores</a>
+          <a href="/planos.html" class="hover:text-white transition-colors">Planos</a>
+          <span class="text-white font-medium">Cadastro</span>
+          <a href="/conta.html" class="hover:text-white transition-colors">Conta</a>
+        </div>
+        <div class="flex items-center space-x-3 ml-8">
+          <div id="apiStatus" class="w-8 h-8 bg-green-500 bg-opacity-10 border border-green-500 border-opacity-30 rounded-full flex items-center justify-center relative">
+            <i class="fas fa-shield-alt text-green-500 text-xs"></i>
+            <div class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          </div>
+          <a href="/login.html" class="hover:bg-gray-200 transition-colors text-xs font-medium text-black bg-white rounded-full pt-1.5 pr-3 pb-1.5 pl-3">Login</a>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Content -->
+    <div class="relative z-10 pt-32 pb-16">
+      <div class="max-w-7xl mx-auto px-6">
+        
+        <!-- Header -->
+        <div class="text-center mb-12">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">
+            <span style="color: #ba39af; font-weight: 900;">Crie</span>
+            <span class="text-white font-light">sua conta</span>
+          </h1>
+          <p class="text-neutral-300 text-lg max-w-2xl mx-auto">
+            Junte-se à plataforma de análise financeira mais avançada do Brasil.
+          </p>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="max-w-lg mx-auto">
+          <div class="register-card p-8">
+            
+            <!-- Alert -->
+            <div id="alert" class="alert hidden mb-6 p-4 rounded-lg backdrop-blur-sm border">
+              <div class="flex items-center gap-3">
+                <i class="fas fa-info-circle"></i>
+                <span id="alertMessage"></span>
+              </div>
+            </div>
+
+            <!-- Form -->
+            <form id="registerForm" class="space-y-6">
+              <div>
+                <label for="name" class="block text-sm font-medium text-gray-300 mb-2">
+                  <i class="fas fa-user mr-2 text-geminii"></i>
+                  Nome Completo
+                </label>
+                <input 
+                  type="text" 
+                  id="name" 
+                  name="name"
+                  required
+                  placeholder="Seu nome completo"
+                  class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                >
+              </div>
+
+              <div>
+                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">
+                  <i class="fas fa-envelope mr-2 text-geminii"></i>
+                  E-mail
+                </label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email"
+                  required
+                  placeholder="seu@email.com"
+                  class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                >
+              </div>
+
+              <div>
+                <label for="password" class="block text-sm font-medium text-gray-300 mb-2">
+                  <i class="fas fa-lock mr-2 text-geminii"></i>
+                  Senha
+                </label>
+                <div class="relative">
+                  <input 
+                    type="password" 
+                    id="password" 
+                    name="password"
+                    required
+                    placeholder="Mínimo 6 caracteres"
+                    class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400 pr-12"
+                  >
+                  <button 
+                    type="button" 
+                    id="togglePassword"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  >
+                    <i class="fas fa-eye" id="eyeIcon"></i>
+                  </button>
+                </div>
+                
+                <!-- Password Strength -->
+                <div class="password-strength">
+                  <div class="strength-bar" id="strengthBar"></div>
+                </div>
+                <p class="text-xs text-gray-400 mt-1" id="strengthText">Digite uma senha</p>
+              </div>
+
+              <div>
+                <label for="confirmPassword" class="block text-sm font-medium text-gray-300 mb-2">
+                  <i class="fas fa-check-circle mr-2 text-geminii"></i>
+                  Confirmar Senha
+                </label>
+                <input 
+                  type="password" 
+                  id="confirmPassword" 
+                  name="confirmPassword"
+                  required
+                  placeholder="Confirme sua senha"
+                  class="form-input w-full px-4 py-3 rounded-lg text-white placeholder-gray-400"
+                >
+              </div>
+
+              <!-- Plan Selection -->
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-3">
+                  <i class="fas fa-crown mr-2 text-geminii"></i>
+                  Escolha seu Plano
+                </label>
+                <div id="plansContainer" class="space-y-3">
+                  <!-- Plans will be loaded here -->
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                id="registerBtn"
+                class="btn-primary w-full py-3 rounded-lg font-semibold text-white flex items-center justify-center gap-2"
+              >
+                <span id="btnText">Criar Conta Gratuita</span>
+                <div id="loading" class="hidden">
+                  <div class="spinner"></div>
+                </div>
+              </button>
+            </form>
+
+            <!-- Terms -->
+            <div class="mt-6 text-center">
+              <p class="text-xs text-gray-400">
+                Ao criar uma conta, você concorda com nossos 
+                <a href="#" class="text-geminii hover:text-purple-400 transition-colors">Termos de Uso</a> 
+                e 
+                <a href="#" class="text-geminii hover:text-purple-400 transition-colors">Política de Privacidade</a>
+              </p>
+            </div>
+
+            <!-- Links -->
+            <div class="mt-8 text-center space-y-4">
+              <div class="border-t border-white border-opacity-20 pt-6">
+                <p class="text-gray-400 text-sm mb-3">
+                  Já tem uma conta?
+                </p>
+                <a 
+                  href="/login.html" 
+                  class="inline-flex items-center gap-2 text-geminii hover:text-purple-400 transition-colors font-medium"
+                >
+                  <i class="fas fa-sign-in-alt"></i>
+                  Fazer login
+                </a>
+              </div>
+              
+              <div class="pt-4">
+                <a 
+                  href="/home.html" 
+                  class="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-sm"
+                >
+                  <i class="fas fa-arrow-left"></i>
+                  Voltar ao início
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Benefits -->
+          <div class="register-card p-6 mt-8">
+            <h3 class="text-lg font-semibold text-white mb-4 text-center">
+              <i class="fas fa-rocket mr-2 text-geminii"></i>
+              Por que escolher a Geminii?
+            </h3>
+            
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-geminii bg-opacity-20 rounded-full flex items-center justify-center">
+                  <i class="fas fa-chart-line text-geminii text-sm"></i>
+                </div>
+                <div>
+                  <p class="text-white font-medium text-sm">Análise RSL em Tempo Real</p>
+                  <p class="text-gray-400 text-xs">Indicadores baseados no MetaTrader</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-geminii bg-opacity-20 rounded-full flex items-center justify-center">
+                  <i class="fas fa-industry text-geminii text-sm"></i>
+                </div>
+                <div>
+                  <p class="text-white font-medium text-sm">Radar de Setores B3</p>
+                  <p class="text-gray-400 text-xs">Mapeamento completo por volatilidade</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-geminii bg-opacity-20 rounded-full flex items-center justify-center">
+                  <i class="fas fa-brain text-geminii text-sm"></i>
+                </div>
+                <div>
+                  <p class="text-white font-medium text-sm">IA Estratégica</p>
+                  <p class="text-gray-400 text-xs">Recomendações inteligentes de investimento</p>
+                </div>
+              </div>
+              
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-geminii bg-opacity-20 rounded-full flex items-center justify-center">
+                  <i class="fas fa-shield-alt text-geminii text-sm"></i>
+                </div>
+                <div>
+                  <p class="text-white font-medium text-sm">Dados Seguros</p>
+                  <p class="text-gray-400 text-xs">Criptografia e segurança enterprise</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Elementos DOM
+    const registerForm = document.getElementById('registerForm');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const togglePassword = document.getElementById('togglePassword');
+    const eyeIcon = document.getElementById('eyeIcon');
+    const registerBtn = document.getElementById('registerBtn');
+    const btnText = document.getElementById('btnText');
+    const loading = document.getElementById('loading');
+    const alert = document.getElementById('alert');
+    const alertMessage = document.getElementById('alertMessage');
+    const strengthBar = document.getElementById('strengthBar');
+    const strengthText = document.getElementById('strengthText');
+    const plansContainer = document.getElementById('plansContainer');
+    
+    let selectedPlanId = 1; // Default to basic plan
+    let availablePlans = [];
+    
+    // Toggle password visibility
+    togglePassword.addEventListener('click', function() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      
+      eyeIcon.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+    });
+    
+    // Password strength checker
+    passwordInput.addEventListener('input', function() {
+      const password = this.value;
+      const strength = checkPasswordStrength(password);
+      
+      updatePasswordStrength(strength);
+    });
+    
+    function checkPasswordStrength(password) {
+      let score = 0;
+      
+      if (password.length >= 6) score++;
+      if (password.length >= 8) score++;
+      if (/[A-Z]/.test(password)) score++;
+      if (/[a-z]/.test(password)) score++;
+      if (/[0-9]/.test(password)) score++;
+      if (/[^A-Za-z0-9]/.test(password)) score++;
+      
+      if (score < 3) return 'weak';
+      if (score < 5) return 'medium';
+      return 'strong';
+    }
+    
+    function updatePasswordStrength(strength) {
+      strengthBar.className = 'strength-bar';
+      
+      switch (strength) {
+        case 'weak':
+          strengthBar.classList.add('strength-weak');
+          strengthText.textContent = 'Senha fraca';
+          strengthText.className = 'text-xs text-red-400 mt-1';
+          break;
+        case 'medium':
+          strengthBar.classList.add('strength-medium');
+          strengthText.textContent = 'Senha média';
+          strengthText.className = 'text-xs text-yellow-400 mt-1';
+          break;
+        case 'strong':
+          strengthBar.classList.add('strength-strong');
+          strengthText.textContent = 'Senha forte';
+          strengthText.className = 'text-xs text-green-400 mt-1';
+          break;
+        default:
+          strengthText.textContent = 'Digite uma senha';
+          strengthText.className = 'text-xs text-gray-400 mt-1';
+      }
+    }
+    
+    // Show alert function
+    function showAlert(message, type = 'info') {
+      const alertClasses = {
+        success: 'bg-green-600 bg-opacity-20 border-green-500 border-opacity-30 text-green-300',
+        error: 'bg-red-600 bg-opacity-20 border-red-500 border-opacity-30 text-red-300',
+        info: 'bg-blue-600 bg-opacity-20 border-blue-500 border-opacity-30 text-blue-300'
+      };
+      
+      alert.className = `alert mb-6 p-4 rounded-lg backdrop-blur-sm border ${alertClasses[type]} show`;
+      alertMessage.textContent = message;
+      alert.classList.remove('hidden');
+      
+      // Auto-hide after 5 seconds for error messages
+      if (type === 'error') {
+        setTimeout(() => {
+          alert.classList.add('hidden');
+          alert.classList.remove('show');
+        }, 5000);
+      }
+    }
+    
+    // Load available plans
+    async function loadPlans() {
+      try {
+        const response = await fetch('/api/plans');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          availablePlans = data.data;
+          renderPlans();
+        } else {
+          throw new Error('Falha ao carregar planos');
+        }
+      } catch (error) {
+        console.error('Error loading plans:', error);
+        showAlert('Erro ao carregar planos. Usando plano básico.', 'error');
+        
+        // Fallback to basic plan only
+        availablePlans = [{
+          id: 1,
+          display_name: 'Básico',
+          price_monthly: 0,
+          description: 'Acesso gratuito aos recursos básicos'
+        }];
+        renderPlans();
+      }
+    }
+    
+    function renderPlans() {
+      plansContainer.innerHTML = availablePlans.map(plan => `
+        <div class="plan-card p-4 rounded-lg ${plan.id === 1 ? 'selected' : ''}" onclick="selectPlan(${plan.id})">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <input type="radio" name="plan" value="${plan.id}" ${plan.id === 1 ? 'checked' : ''} class="text-geminii">
+              <div>
+                <h4 class="font-semibold text-white">${plan.display_name}</h4>
+                <p class="text-xs text-gray-400">${plan.description || 'Plano completo'}</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <p class="font-bold text-geminii">
+                ${plan.price_monthly === 0 ? 'Gratuito' : `R$ ${plan.price_monthly.toFixed(2)}/mês`}
+              </p>
+              ${plan.discount_percent > 0 ? `<p class="text-xs text-green-400">${plan.discount_percent}% off anual</p>` : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function selectPlan(planId) {
+      selectedPlanId = planId;
+      
+      // Update UI
+      document.querySelectorAll('.plan-card').forEach(card => {
+        card.classList.remove('selected');
+      });
+      
+      event.currentTarget.classList.add('selected');
+      event.currentTarget.querySelector('input[type="radio"]').checked = true;
+      
+      const selectedPlan = availablePlans.find(p => p.id === planId);
+      if (selectedPlan) {
+        btnText.textContent = selectedPlan.price_monthly === 0 ? 'Criar Conta Gratuita' : `Criar Conta - ${selectedPlan.display_name}`;
+      }
+    }
+    
+    // Make selectPlan global
+    window.selectPlan = selectPlan;
+    
+    // Check API status
+    async function checkApiStatus() {
+      try {
+        const response = await fetch('/api/status');
+        const data = await response.json();
+        
+        if (data.status === 'online') {
+          document.getElementById('apiStatus').innerHTML = `
+            <i class="fas fa-shield-alt text-green-500 text-xs"></i>
+            <div class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          `;
+        }
+      } catch (error) {
+        document.getElementById('apiStatus').innerHTML = `
+          <i class="fas fa-shield-alt text-red-500 text-xs"></i>
+          <div class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+        `;
+        showAlert('Servidor offline. Aguarde...', 'error');
+      }
+    }
+    
+    // Check if already logged in
+    function checkExistingSession() {
+      const token = localStorage.getItem('geminii_token');
+      if (token) {
+        fetch('/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        })
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            showAlert('Você já está logado! Redirecionando...', 'info');
+            setTimeout(() => {
+              window.location.href = '/dashboard.html';
+            }, 1500);
+          }
+        })
+        .catch(() => {
+          // Token inválido, remover
+          localStorage.removeItem('geminii_token');
+          localStorage.removeItem('geminii_user');
+        });
+      }
+    }
+    
+    // Registration form submission
+    registerForm.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+      
+      // Validações
+      if (!name || !email || !password || !confirmPassword) {
+        showAlert('Por favor, preencha todos os campos.', 'error');
+        return;
+      }
+      
+      if (!email.includes('@')) {
+        showAlert('Por favor, insira um e-mail válido.', 'error');
+        return;
+      }
+      
+      if (password.length < 6) {
+        showAlert('A senha deve ter pelo menos 6 caracteres.', 'error');
+        return;
+      }
+      
+      if (password !== confirmPassword) {
+        showAlert('As senhas não coincidem.', 'error');
+        return;
+      }
+      
+      const strength = checkPasswordStrength(password);
+      if (strength === 'weak') {
+        showAlert('Por favor, use uma senha mais forte.', 'error');
+        return;
+      }
+      
+      // Show loading
+      btnText.classList.add('hidden');
+      loading.classList.remove('hidden');
+      registerBtn.disabled = true;
+      
+      try {
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ 
+            name, 
+            email, 
+            password, 
+            plan_id: selectedPlanId 
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          showAlert(`Conta criada com sucesso! Redirecionando para login...`, 'success');
+          
+          // Redirect to login after 2 seconds
+          setTimeout(() => {
+            window.location.href = `/login.html?email=${encodeURIComponent(email)}`;
+          }, 2000);
+          
+        } else {
+          showAlert(result.error || 'Erro ao criar conta. Tente novamente.', 'error');
+        }
+        
+      } catch (error) {
+        console.error('Registration error:', error);
+        showAlert('Erro de conexão. Verifique se o servidor está rodando.', 'error');
+      } finally {
+        // Hide loading
+        btnText.classList.remove('hidden');
+        loading.classList.add('hidden');
+        registerBtn.disabled = false;
+      }
+    });
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('📝 Página de registro carregada');
+      checkExistingSession();
+      checkApiStatus();
+      loadPlans();
+      
+      // Focus first input
+      nameInput.focus();
+      
+      // Pre-fill email if coming from login page
+      const urlParams = new URLSearchParams(window.location.search);
+      const emailParam = urlParams.get('email');
+      if (emailParam) {
+        emailInput.value = emailParam;
+        passwordInput.focus();
+      }
+    });
+  </script>
+</body>
+</html>

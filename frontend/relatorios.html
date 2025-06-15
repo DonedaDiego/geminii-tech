@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatórios Premium - Geminii</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            dark: '#000000',
+            light: '#ffffff',
+            subtle: 'rgba(255,255,255,0.1)',
+            geminii: '#ba39af'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { 
+      font-family: 'Inter', sans-serif; 
+      overflow-x: hidden;
+    }
+    
+    .report-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px) brightness(0.9);
+      -webkit-backdrop-filter: blur(20px) brightness(0.9);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .report-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px rgba(186, 57, 175, 0.15);
+      border-color: rgba(186, 57, 175, 0.3);
+    }
+    
+    .performance-positive { color: #10b981; }
+    .performance-negative { color: #ef4444; }
+    
+    .recommendation-buy { 
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .recommendation-sell {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .recommendation-hold {
+      background: rgba(245, 158, 11, 0.2);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .floating-elements {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .floating-element {
+      position: absolute;
+      background: linear-gradient(135deg, rgba(186, 57, 175, 0.1), rgba(217, 70, 239, 0.1));
+      border-radius: 50%;
+      animation: float 12s ease-in-out infinite;
+    }
+
+    .floating-element:nth-child(1) {
+      width: 200px;
+      height: 200px;
+      top: 10%;
+      left: 5%;
+      animation-delay: 0s;
+    }
+
+    .floating-element:nth-child(2) {
+      width: 150px;
+      height: 150px;
+      top: 60%;
+      right: 10%;
+      animation-delay: 6s;
+    }
+
+    .floating-element:nth-child(3) {
+      width: 100px;
+      height: 100px;
+      bottom: 20%;
+      left: 20%;
+      animation-delay: 3s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-30px) rotate(180deg); }
+    }
+  </style>
+</head>
+<body class="bg-black text-white">
+  <div class="relative min-h-screen">
+    <!-- Spline 3D background -->
+    <div class="fixed inset-0 z-0">
+      <iframe src="https://my.spline.design/thresholddarkambientui-v0gkZCfi6zXm69kE0wccy70f/" frameborder="0" width="100%" height="100%" class="w-full h-full"></iframe>
+    </div>
+    
+    <!-- Floating elements -->
+    <div class="floating-elements">
+      <div class="floating-element"></div>
+      <div class="floating-element"></div>
+      <div class="floating-element"></div>
+    </div>
+    
+    <!-- Glass floating navbar -->
+    <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-opacity-5 border-opacity-10 bg-white border-white border rounded-full pt-4 pr-4 pb-4 pl-4 shadow-xl backdrop-blur-md">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <img src="https://app.geminii.com.br/wp-content/uploads/2025/06/logo.png" alt="Geminii Logo" class="w-6 h-6 cursor-pointer" onclick="window.location.href='/dashboard.html'">
+        </div>
+        <div class="hidden md:flex items-center space-x-6 text-xs text-gray-300 ml-8">
+          <a href="/dashboard.html" class="hover:text-white transition-colors">Dashboard</a>
+          <a href="/monitor-basico.html" class="hover:text-white transition-colors">Scanner</a>
+          <a href="/radar-setores.html" class="hover:text-white transition-colors">Radar de Setores</a>
+          <span class="text-white font-medium">Relatórios</span>
+          <a href="/planos.html" class="hover:text-white transition-colors">Planos</a>
+        </div>
+        <div class="flex items-center space-x-3 ml-8">
+          <div class="bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+            ANALISTA PREMIUM
+          </div>
+          <button onclick="logout()" class="hover:bg-red-200 transition-colors text-xs font-medium text-black bg-red-100 rounded-full pt-1.5 pr-3 pb-1.5 pl-3">Sair</button>
+        </div>
+      </div>
+    </nav>
+    
+    <!-- Content -->
+    <div class="relative z-10 pt-32 pb-16">
+      <div class="max-w-7xl mx-auto px-6">
+        
+        <!-- Header -->
+        <div class="text-center mb-12">
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">
+            <span style="color: #ba39af; font-weight: 900;">Relatórios</span>
+            <span class="text-white font-light">Premium</span>
+          </h1>
+          <p class="text-neutral-300 text-lg max-w-2xl mx-auto">
+            Análises exclusivas do analista Diego Doneda com recomendações fundamentadas e acompanhamento em tempo real.
+          </p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div class="report-card p-6 text-center">
+            <div class="text-3xl mb-2">📊</div>
+            <div class="text-2xl font-bold text-white mb-1">8</div>
+            <div class="text-sm text-gray-400">Relatórios Ativos</div>
+          </div>
+          
+          <div class="report-card p-6 text-center">
+            <div class="text-3xl mb-2">💰</div>
+            <div class="text-2xl font-bold performance-positive mb-1">+23.7%</div>
+            <div class="text-sm text-gray-400">Performance Média</div>
+          </div>
+          
+          <div class="report-card p-6 text-center">
+            <div class="text-3xl mb-2">🎯</div>
+            <div class="text-2xl font-bold text-white mb-1">5.68</div>
+            <div class="text-sm text-gray-400">Índice Sharpe</div>
+          </div>
+          
+          <div class="report-card p-6 text-center">
+            <div class="text-3xl mb-2">⚡</div>
+            <div class="text-2xl font-bold text-white mb-1">12</div>
+            <div class="text-sm text-gray-400">Alertas Ativos</div>
+          </div>
+        </div>
+
+        <!-- Recent Reports -->
+        <div class="report-card p-8 mb-8">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-white">Relatórios Recentes</h2>
+            <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+              <i class="fas fa-plus mr-2"></i>
+              Novo Relatório
+            </button>
+          </div>
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Report 1 -->
+            <div class="bg-white bg-opacity-5 rounded-lg p-6 border border-white border-opacity-10">
+              <div class="flex items-start justify-between mb-4">
+                <div>
+                  <h3 class="text-lg font-semibold text-white mb-1">Carteira Growth Energia</h3>
+                  <p class="text-sm text-gray-400">Publicado há 2 dias</p>
+                </div>
+                <div class="bg-green-600 bg-opacity-20 text-green-400 px-3 py-1 rounded-full text-xs font-semibold">
+                  ATIVO
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-3 gap-4 mb-4">
+                <div class="text-center">
+                  <div class="text-xs text-gray-400 mb-1">Performance</div>
+                  <div class="text-lg font-bold performance-positive">+18.7%</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xs text-gray-400 mb-1">Risco</div>
+                  <div class="text-lg font-bold text-white">17.87%</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xs text-gray-400 mb-1">Sharpe</div>
+                  <div class="text-lg font-bold text-white">5.68</div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <h4 class="text-sm font-medium text-white mb-3">Principais Posições:</h4>
+                <div class="space-y-2">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-300">CPFE3 - 37.58%</span>
+                    <span class="recommendation-buy">COMPRA</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-300">LAVV3 - 19.1%</span>
+                    <span class="recommendation-hold">MANTER</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-300">TIMS3 - 14.68%</span>
+                    <span class="recommendation-buy">COMPRA</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="flex gap-3">
+                <button onclick="openReport('carteira-growth-energia')" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
+                  Ver Relatório
+                </button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
+                  <i class="fas fa-chart-line"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Report 2 -->
+            <div class="bg-white bg-opacity-5 rounded-lg p-6 border border-white border-opacity-10">
+              <div class="flex items-start justify-between mb-4">
+                <div>
+                  <h3 class="text-lg font-semibold text-white mb-1">Carteira Value Bancários</h3>
+                  <p class="text-sm text-gray-400">Publicado há 5 dias</p>
+                </div>
+                <div class="bg-yellow-600 bg-opacity-20 text-yellow-400 px-3 py-1 rounded-full text-xs font-semibold">
+                  REVISÃO
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-3 gap-4 mb-4">
+                <div class="text-center">
+                  <div class="text-xs text-gray-400 mb-1">Performance</div>
+                  <div class="text-lg font-bold performance-positive">+12.3%</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xs text-gray-400 mb-1">Risco</div>
+                  <div class="text-lg font-bold text-white">15.42%</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-xs text-gray-400 mb-1">Sharpe</div>
+                  <div class="text-lg font-bold text-white">4.22</div>
+                </div>
+              </div>
+              
+              <div class="mb-4">
+                <h4 class="text-sm font-medium text-white mb-3">Principais Posições:</h4>
+                <div class="space-y-2">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-300">ITUB4 - 35.2%</span>
+                    <span class="recommendation-buy">COMPRA</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-300">BBDC4 - 28.5%</span>
+                    <span class="recommendation-hold">MANTER</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm text-gray-300">SANB11 - 22.1%</span>
+                    <span class="recommendation-sell">VENDA</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="flex gap-3">
+                <button onclick="openReport('carteira-value-bancarios')" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
+                  Ver Relatório
+                </button>
+                <button class="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-lg text-sm font-medium transition-colors">
+                  <i class="fas fa-chart-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="report-card p-6">
+          <h2 class="text-xl font-bold text-white mb-6">Atividade Recente</h2>
+          
+          <div class="space-y-4">
+            <div class="flex items-center gap-4 p-4 bg-white bg-opacity-5 rounded-lg">
+              <div class="w-10 h-10 bg-green-600 bg-opacity-20 rounded-full flex items-center justify-center">
+                <i class="fas fa-arrow-up performance-positive"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-white font-medium">CPFE3 atingiu preço alvo de R$ 43.32</p>
+                <p class="text-sm text-gray-400">Recomendação: Realizar lucros parciais • Há 2 horas</p>
+              </div>
+              <div class="performance-positive font-semibold">+8.5%</div>
+            </div>
+            
+            <div class="flex items-center gap-4 p-4 bg-white bg-opacity-5 rounded-lg">
+              <div class="w-10 h-10 bg-blue-600 bg-opacity-20 rounded-full flex items-center justify-center">
+                <i class="fas fa-file-alt text-blue-400"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-white font-medium">Novo relatório: Carteira Growth Energia</p>
+                <p class="text-sm text-gray-400">Análise completa com 6 recomendações • Ontem</p>
+              </div>
+              <div class="text-blue-400 font-semibold">NOVO</div>
+            </div>
+            
+            <div class="flex items-center gap-4 p-4 bg-white bg-opacity-5 rounded-lg">
+              <div class="w-10 h-10 bg-yellow-600 bg-opacity-20 rounded-full flex items-center justify-center">
+                <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+              </div>
+              <div class="flex-1">
+                <p class="text-white font-medium">TIMS3 próximo do stop loss</p>
+                <p class="text-sm text-gray-400">Monitorar posição de perto • Há 1 dia</p>
+              </div>
+              <div class="text-yellow-400 font-semibold">ALERTA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Open report function
+    function openReport(reportSlug) {
+      alert(`🔍 Abrindo relatório: ${reportSlug}\n\nEm breve será implementado com PDF/visualização completa!`);
+      console.log('Opening report:', reportSlug);
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm('Tem certeza que deseja sair?')) {
+        localStorage.removeItem('geminii_token');
+        localStorage.removeItem('geminii_user');
+        window.location.href = '/home.html';
+      }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('📊 Página de Relatórios Premium carregada');
+      
+      // Check if user is logged in
+      const token = localStorage.getItem('geminii_token');
+      if (!token) {
+        alert('Acesso negado! Faça login para continuar.');
+        window.location.href = '/login.html';
+        return;
+      }
+      
+      console.log('✅ Usuário autenticado - Carregando relatórios...');
+    });
+
+    // Global functions
+    window.openReport = openReport;
+    window.logout = logout;
+  </script>
+</body>
+</html>

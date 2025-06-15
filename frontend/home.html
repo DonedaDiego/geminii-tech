@@ -108,6 +108,88 @@
       transition: all 0.3s ease;
     }
 
+    /* ✅ NOVO: User Menu Styles */
+    .user-menu {
+      position: relative;
+      display: inline-block;
+    }
+
+    .user-menu-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      min-width: 200px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      margin-top: 8px;
+      padding: 8px;
+    }
+
+    .user-menu.active .user-menu-dropdown {
+      display: block;
+    }
+
+    .user-menu-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      color: #333;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      font-size: 14px;
+    }
+
+    .user-menu-item:hover {
+      background: rgba(186, 57, 175, 0.1);
+      color: #ba39af;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ba39af, #d946ef);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .user-avatar:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(186, 57, 175, 0.5);
+    }
+
+    .plan-badge {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-left: 4px;
+    }
+
+    .plan-badge.premium {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .plan-badge.strategic {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    }
+
     /* DROPDOWN STYLES - CLICK BASED */
     .dropdown {
       position: relative;
@@ -204,6 +286,20 @@
       font-weight: 600;
     }
 
+    /* ✅ NOVO: Protected Item Styles */
+    .dropdown-item.requires-auth {
+      opacity: 0.7;
+      position: relative;
+    }
+
+    .dropdown-item.requires-auth::after {
+      content: '🔒';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 12px;
+    }
+
     /* Newsletter Input Neon Effect */
     .newsletter-input:focus {
       border-color: #ba39af;
@@ -266,272 +362,6 @@
       color: #ba39af;
     }
 
-    /* GRÁFICO INTERATIVO COM ANIMAÇÕES AVANÇADAS */
-    .chart-container {
-      background: transparent;
-      padding: 30px 20px;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .chart-container::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at center, rgba(186, 57, 175, 0.05), transparent);
-      opacity: 0;
-      transition: opacity 0.5s ease;
-      pointer-events: none;
-    }
-
-    .chart-container:hover::before {
-      opacity: 1;
-    }
-
-    .animated-chart {
-      width: 100%;
-      height: auto;
-      max-width: 550px;
-      margin: 0 auto;
-      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      filter: drop-shadow(0 10px 20px rgba(186, 57, 175, 0.1));
-    }
-
-    .chart-container:hover .animated-chart {
-      transform: translateY(-10px) scale(1.05);
-      filter: drop-shadow(0 20px 40px rgba(186, 57, 175, 0.2));
-    }
-
-    /* Animação inicial da linha */
-    .chart-line {
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      animation: drawLine 3s ease-in-out forwards;
-      transition: all 0.3s ease;
-    }
-
-    .chart-container:hover .chart-line {
-      stroke-width: 4;
-      filter: drop-shadow(0 0 8px #ba39af);
-    }
-
-    /* Área do gráfico */
-    .chart-area {
-      opacity: 0;
-      animation: fadeInArea 2s ease-in-out 1.5s forwards;
-      transition: all 0.3s ease;
-    }
-
-    .chart-container:hover .chart-area {
-      opacity: 0.8;
-    }
-
-    /* Pontos interativos */
-    .chart-points circle {
-      opacity: 0;
-      transform-origin: center;
-      animation: popInPoints 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .chart-container:hover .chart-points circle {
-      opacity: 1;
-      r: 6;
-      filter: drop-shadow(0 0 6px #ba39af);
-    }
-
-    .chart-points circle:hover {
-      r: 8;
-      filter: drop-shadow(0 0 12px #ba39af);
-      stroke: rgba(255, 255, 255, 0.8);
-      stroke-width: 2;
-    }
-
-    /* Tooltip para os pontos */
-    .chart-tooltip {
-      position: absolute;
-      background: rgba(0, 0, 0, 0.9);
-      backdrop-filter: blur(10px);
-      color: white;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 500;
-      pointer-events: none;
-      opacity: 0;
-      transform: translateY(-10px);
-      transition: all 0.3s ease;
-      border: 1px solid rgba(186, 57, 175, 0.3);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    }
-
-    .chart-tooltip.show {
-      opacity: 1;
-      transform: translateY(-15px);
-    }
-
-    /* Grid animado */
-    .chart-grid {
-      opacity: 0.3;
-      transition: opacity 0.3s ease;
-    }
-
-    .chart-container:hover .chart-grid {
-      opacity: 0.6;
-    }
-
-    /* Labels dos eixos com animação */
-    .axis-label {
-      opacity: 0;
-      animation: fadeInLabels 1s ease-out 2s forwards;
-      transition: all 0.3s ease;
-    }
-
-    .chart-container:hover .axis-label {
-      opacity: 1;
-      font-weight: 600;
-    }
-
-    /* Delays para animação sequencial dos pontos */
-    .chart-points circle:nth-child(1) { animation-delay: 2.5s; }
-    .chart-points circle:nth-child(2) { animation-delay: 2.7s; }
-    .chart-points circle:nth-child(3) { animation-delay: 2.9s; }
-    .chart-points circle:nth-child(4) { animation-delay: 3.1s; }
-    .chart-points circle:nth-child(5) { animation-delay: 3.3s; }
-    .chart-points circle:nth-child(6) { animation-delay: 3.5s; }
-    .chart-points circle:nth-child(7) { animation-delay: 3.7s; }
-    .chart-points circle:nth-child(8) { animation-delay: 3.9s; }
-
-    /* Keyframes */
-    @keyframes drawLine {
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
-
-    @keyframes fadeInArea {
-      to {
-        opacity: 0.6;
-      }
-    }
-
-    @keyframes popInPoints {
-      0% {
-        opacity: 0;
-        transform: scale(0);
-      }
-      80% {
-        transform: scale(1.3);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes fadeInLabels {
-      to {
-        opacity: 0.7;
-      }
-    }
-
-    /* Pulse do gráfico inteiro */
-    @keyframes chartPulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.02);
-      }
-    }
-
-    .chart-container:hover .animated-chart {
-      animation: chartPulse 2s ease-in-out infinite;
-    }
-
-    /* Chart Text Animation */
-    .chart-text {
-      animation: slideInRight 1s ease-out 0.5s both;
-      transition: all 0.3s ease;
-    }
-
-    .chart-container:hover + .chart-text {
-      transform: translateX(5px);
-    }
-
-    .chart-text h3 {
-      animation: fadeInUp 1s ease-out 1s both;
-    }
-
-    .chart-text p {
-      animation: fadeInUp 1s ease-out 1.5s both;
-    }
-
-    .chart-text button {
-      animation: fadeInUp 1s ease-out 2s both;
-    }
-
-    @keyframes slideInRight {
-      from {
-        opacity: 0;
-        transform: translateX(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Responsive Chart */
-    @media (max-width: 1024px) {
-      .chart-container {
-        order: 2;
-        margin-top: 2rem;
-      }
-      
-      .chart-text {
-        order: 1;
-        text-align: center;
-      }
-    }
-
-    /* Efeito de brilho no hover do botão */
-    .glow-button {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .glow-button::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      transition: left 0.5s ease;
-    }
-
-    .glow-button:hover::before {
-      left: 100%;
-    }
-
     /* API Status Indicator */
     .api-status {
       position: fixed;
@@ -579,6 +409,60 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
+    /* EFEITO HOVER NO GEMINII TECH */
+    h1 span[style*="color: #ba39af"]:hover {
+      text-shadow: 
+        0 0 30px rgba(186, 57, 175, 1),
+        0 0 60px rgba(186, 57, 175, 0.8),
+        0 4px 20px rgba(0, 0, 0, 0.9) !important;
+      transition: text-shadow 0.3s ease;
+    }
+
+    h1 span.text-white.font-light {
+      font-size: 0.75em;
+    }
+
+    /* Light Pink Button */
+    .light-pink-btn {
+      background: rgba(255, 182, 193, 0.3);
+      border: 1px solid rgba(255, 182, 193, 0.5);
+      color: #ffb6c1;
+      backdrop-filter: blur(10px);
+    }
+
+    .light-pink-btn:hover {
+      background: rgba(255, 182, 193, 0.5);
+      border-color: rgba(255, 182, 193, 0.8);
+      color: #ffffff;
+      box-shadow: 
+        0 10px 25px rgba(255, 182, 193, 0.2),
+        0 0 20px rgba(255, 182, 193, 0.3);
+    }
+
+    /* ✅ NOVO: Auth Button Styles */
+    .auth-btn {
+      background: linear-gradient(135deg, #ba39af, #d946ef);
+      color: white;
+      border: none;
+      transition: all 0.3s ease;
+    }
+
+    .auth-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(186, 57, 175, 0.3);
+    }
+
+    .dashboard-btn {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #10b981;
+    }
+
+    .dashboard-btn:hover {
+      background: rgba(16, 185, 129, 0.3);
+      color: white;
+    }
   </style>
 </head>
 <body class="bg-black text-white font-sans">
@@ -595,29 +479,29 @@
           <img src="https://app.geminii.com.br/wp-content/uploads/2025/06/logo.png" alt="Geminii Logo" class="w-6 h-6 neon-logo">
         </div>
         <div class="hidden md:flex items-center space-x-6 text-xs text-gray-300 ml-8">
-          <a href="/" class="hover:text-white transition-colors"></a>
+          <a href="/" class="hover:text-white transition-colors">Home</a>
           
-          <!-- Dropdown Opções -->
+          <!-- Dropdown Scanner -->
           <div class="dropdown">
             <span class="dropdown-toggle hover:text-white transition-colors">Scanner</span>
             <div class="dropdown-content">
               <div class="dropdown-grid">
-                <div class="dropdown-item" onclick="window.location.href='/monitor-basico.html'">
+                <div class="dropdown-item" onclick="navigateToPage('/monitor-basico.html')">
                   <h4>Monitor Básico <span class="dropdown-badge" style="background: #10b981;">Grátis</span></h4>
                   <p>Análise técnica essencial com indicadores principais e OBV.</p>
                 </div>
-                <div class="dropdown-item">
-                  <h4>Scanner Avançado <span class="dropdown-badge" style="background: #f59e0b;">Pro</span></h4>
-                  <p>Filtros personalizados, alertas em tempo real e análise técnica completa.</p>
+                <div class="dropdown-item requires-auth" onclick="navigateToPage('/long-short.html', true)">
+                  <h4>Long&Short <span class="dropdown-badge" style="background: #f59e0b;">Premium</span></h4>
+                  <p>Análise de pares por cointegração para arbitragem estatística.</p>
                 </div>
-                <div class="dropdown-item" onclick="window.location.href='/radar-setores.html'">
+                <div class="dropdown-item" onclick="navigateToPage('/radar-setores.html')">
                   <h4>Radar de Setores <span class="dropdown-badge" style="background: #10b981;">Grátis</span></h4>
                   <p>Identifique setores em alta e oportunidades emergentes.</p>
                 </div>
-                <div class="dropdown-item">
-                  <h4>Alertas Inteligentes <span class="dropdown-badge" style="background: #f59e0b;">Pro</span></h4>
-                  <p>Notificações personalizadas quando suas condições forem atingidas.</p>
-                </div>
+                <div class="dropdown-item" onclick="navigateToPage('/relatorios.html', true)">
+                  <h4>Relatórios Premium <span class="dropdown-badge" style="background: #8b5cf6;">Analista</span></h4>
+                  <p>Análises exclusivas do Diego Doneda com carteiras recomendadas.</p>
+                </div> 
               </div>
             </div>
           </div>
@@ -627,19 +511,19 @@
             <span class="dropdown-toggle hover:text-white transition-colors">Rastreio</span>
             <div class="dropdown-content">
               <div class="dropdown-grid">
-                <div class="dropdown-item">
-                  <h4>Backtests</h4>
+                <div class="dropdown-item requires-auth" onclick="showBacktestDialog()">
+                  <h4>Backtests <span class="dropdown-badge" style="background: #f59e0b;">Premium</span></h4>
                   <p>Simule e teste diferentes estratégias quantitativas.</p>
                 </div>
-                <div class="dropdown-item">
-                  <h4>Suportes e Resistências</h4>
+                <div class="dropdown-item requires-auth" onclick="showSupportResistanceDialog()">
+                  <h4>Suportes e Resistências <span class="dropdown-badge" style="background: #f59e0b;">Premium</span></h4>
                   <p>Identifique zonas de suportes e resistências.</p>
                 </div>
-                <div class="dropdown-item">
-                  <h4>Retorno Histórico</h4>
+                <div class="dropdown-item requires-auth" onclick="showHistoricalReturnDialog()">
+                  <h4>Retorno Histórico <span class="dropdown-badge" style="background: #f59e0b;">Premium</span></h4>
                   <p>Calcule o retorno histórico de um portfólio.</p>
                 </div>
-                <div class="dropdown-item">
+                <div class="dropdown-item requires-auth" onclick="showQuantPortfolioDialog()">
                   <h4>Carteiras Quantitativas <span class="dropdown-badge">Novo</span></h4>
                   <p>Calcule o retorno de carteiras com rebalanceamento automático.</p>
                 </div>
@@ -651,12 +535,53 @@
           <a href="/sobre" class="hover:text-white transition-colors">Sobre</a>
           <a href="/conta" class="hover:text-white transition-colors">Conta</a>
         </div>
+        
+        <!-- ✅ NOVO: Auth Section -->
         <div class="flex items-center space-x-3 ml-8">
           <div id="apiStatus" class="w-8 h-8 bg-green-500 bg-opacity-10 border border-green-500 border-opacity-30 rounded-full flex items-center justify-center relative">
             <i class="fas fa-shield-alt text-green-500 text-xs"></i>
             <div class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
           </div>
-          <a href="#" class="hover:bg-gray-200 transition-colors text-xs font-medium text-black bg-white rounded-full pt-1.5 pr-3 pb-1.5 pl-3">Começar</a>
+          
+          <!-- Guest View -->
+          <div id="guestView" class="flex items-center space-x-2">
+            <a href="/login.html" class="hover:bg-gray-200 transition-colors text-xs font-medium text-black bg-white rounded-full pt-1.5 pr-3 pb-1.5 pl-3">Login</a>
+          </div>
+          
+          <!-- User View -->
+          <div id="userView" class="user-menu hidden">
+            <div class="user-avatar" onclick="toggleUserMenu()">
+              <span id="userInitials">GU</span>
+            </div>
+            <div class="user-menu-dropdown" id="userMenuDropdown">
+              <div class="px-3 py-2 border-b border-gray-200">
+                <p class="text-sm font-medium text-gray-900" id="userName">Usuário</p>
+                <p class="text-xs text-gray-500" id="userEmail">email@example.com</p>
+                <p class="text-xs text-gray-500">
+                  Plano: <span id="userPlan" class="font-medium">Básico</span>
+                  <span id="planBadge" class="plan-badge">Free</span>
+                </p>
+              </div>
+              <a href="/dashboard.html" class="user-menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
+              </a>
+              <a href="/conta.html" class="user-menu-item">
+                <i class="fas fa-user-cog"></i>
+                Minha Conta
+              </a>
+              <a href="/planos.html" class="user-menu-item">
+                <i class="fas fa-crown"></i>
+                Planos & Assinatura
+              </a>
+              <div class="border-t border-gray-200 mt-1 pt-1">
+                <a href="#" onclick="logout()" class="user-menu-item">
+                  <i class="fas fa-sign-out-alt"></i>
+                  Sair
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
@@ -678,102 +603,18 @@
           com visão quantitativa e automação completa.
         </p>
         
-        <div class="mt-12 flex flex-col sm:flex-row gap-6">
-          <a href="#" class="px-10 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-pink-500/25 transition-all duration-300 transform hover:scale-105">
-            Começar Automação
-          </a>
-          <a href="#" class="px-10 py-4 bg-white bg-opacity-10 backdrop-blur-sm text-white font-semibold rounded-full hover:bg-opacity-20 transition-all duration-300 border border-white border-opacity-20">
-            Ver Estratégias
-          </a>
-        </div>
-      </div>
-
-      <!-- Chart Section -->
-      <div class="mt-48 w-full max-w-6xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <!-- Chart Container -->
-          <div class="chart-container relative">
-            <svg class="animated-chart" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
-              <!-- Grid Lines -->
-              <defs>
-                <pattern id="grid" width="50" height="30" patternUnits="userSpaceOnUse">
-                  <path d="M 50 0 L 0 0 0 30" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5" stroke-dasharray="2,2"/>
-                </pattern>
-                <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" style="stop-color:#ba39af;stop-opacity:0.5" />
-                  <stop offset="100%" style="stop-color:#ba39af;stop-opacity:0.1" />
-                </linearGradient>
-              </defs>
-              
-              <rect class="chart-grid" width="100%" height="100%" fill="url(#grid)" />
-              
-              <!-- Y-axis Labels Centralizados -->
-              <text x="45" y="50" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 156k</text>
-              <text x="45" y="90" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 135k</text>
-              <text x="45" y="130" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 117k</text>
-              <text x="45" y="170" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 107k</text>
-              <text x="45" y="210" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 98k</text>
-              <text x="45" y="250" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="end" class="axis-label">R$ 85k</text>
-              
-              <!-- X-axis Labels Centralizados -->
-              <text x="80" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">jun/24</text>
-              <text x="150" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">ago/24</text>
-              <text x="220" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">out/24</text>
-              <text x="290" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">jan/25</text>
-              <text x="360" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">jun/25</text>
-              <text x="430" y="280" fill="rgba(255,255,255,0.6)" font-size="11" text-anchor="middle" class="axis-label">ago/25</text>
-              
-              <!-- Area Fill -->
-              <path class="chart-area" d="M50,220 L80,210 L110,200 L140,190 L170,175 L200,165 L230,150 L260,140 L290,125 L320,115 L350,100 L380,85 L410,70 L430,50 L430,260 L50,260 Z" 
-                    fill="url(#areaGradient)"/>
-              
-              <!-- Main Line -->
-              <path class="chart-line" d="M50,220 L80,210 L110,200 L140,190 L170,175 L200,165 L230,150 L260,140 L290,125 L320,115 L350,100 L380,85 L410,70 L430,50" 
-                    fill="none" stroke="#ba39af" stroke-width="3"/>
-              
-              <!-- Interactive Points -->
-              <g class="chart-points">
-                <circle cx="80" cy="210" r="4" fill="#ba39af" data-value="R$ 95.500" data-date="jun/24"/>
-                <circle cx="110" cy="200" r="4" fill="#ba39af" data-value="R$ 102.300" data-date="jul/24"/>
-                <circle cx="140" cy="190" r="4" fill="#ba39af" data-value="R$ 108.750" data-date="ago/24"/>
-                <circle cx="170" cy="175" r="4" fill="#ba39af" data-value="R$ 115.200" data-date="set/24"/>
-                <circle cx="200" cy="165" r="4" fill="#ba39af" data-value="R$ 120.800" data-date="out/24"/>
-                <circle cx="230" cy="150" r="4" fill="#ba39af" data-value="R$ 127.400" data-date="nov/24"/>
-                <circle cx="260" cy="140" r="4" fill="#ba39af" data-value="R$ 132.600" data-date="dez/24"/>
-                <circle cx="290" cy="125" r="4" fill="#ba39af" data-value="R$ 138.900" data-date="jan/25"/>
-                <circle cx="320" cy="115" r="4" fill="#ba39af" data-value="R$ 143.200" data-date="fev/25"/>
-                <circle cx="350" cy="100" r="4" fill="#ba39af" data-value="R$ 149.800" data-date="mar/25"/>
-                <circle cx="380" cy="85" r="4" fill="#ba39af" data-value="R$ 154.100" data-date="abr/25"/>
-                <circle cx="410" cy="70" r="4" fill="#ba39af" data-value="R$ 161.300" data-date="mai/25"/>
-                <circle cx="430" cy="50" r="4" fill="#ba39af" data-value="R$ 168.750" data-date="jun/25"/>
-              </g>
-            </svg>
-            
-            <!-- Tooltip dinâmico -->
-            <div class="chart-tooltip" id="chartTooltip"></div>
+        <!-- ✅ NOVO: Dynamic CTA Button -->
+        <div class="mt-12">
+          <div id="guestCTA">
+            <a href="/register.html" class="auth-btn px-10 py-4 font-semibold rounded-full transition-all duration-300 transform hover:scale-105 inline-block">
+              Começar Grátis
+            </a>
           </div>
           
-          <!-- Text Content -->
-          <div class="chart-text">
-            <h3 class="text-3xl font-medium text-white mb-6">
-              Estratégias <span class="text-geminii-purple font-semibold">automatizadas</span>
-            </h3>
-            
-            <div class="space-y-4 text-neutral-300 leading-relaxed">
-              <p>
-                Nossos algoritmos trabalham 24/7 analisando padrões, identificando 
-                oportunidades e executando operações baseadas em dados reais do mercado.
-              </p>
-              
-              <p>
-                Backtest completo, análise de risco automática e notificações inteligentes. 
-                Deixe a tecnologia fazer o trabalho pesado enquanto você foca nos resultados.
-              </p>
-            </div>
-            
-            <button id="backtestBtn" class="glow-button mt-8 px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-pink-500/25 transition-all duration-300 transform hover:scale-105 relative overflow-hidden">
-              Ativar Robôs
-            </button>
+          <div id="userCTA" class="hidden">
+            <a href="/dashboard.html" class="dashboard-btn px-10 py-4 font-semibold rounded-full transition-all duration-300 transform hover:scale-105 inline-block">
+              Acessar Dashboard
+            </a>
           </div>
         </div>
       </div>
@@ -825,33 +666,6 @@
           <div>
             <h4 class="text-white font-medium mb-4">Produto</h4>
             <ul class="space-y-2">
-              <li><a href="#" class="footer-link">Indicadores</a></li>
-              <li><a href="#" class="footer-link">Rastreador</a></li>
-              <li><a href="#" class="footer-link">Scanner</a></li>
-              <li><a href="#" class="footer-link">Alertas</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-white font-medium mb-4">Empresa</h4>
-            <ul class="space-y-2">
-              <li><a href="#" class="footer-link">Sobre</a></li>
-              <li><a href="#" class="footer-link">Carreiras</a></li>
-              <li><a href="#" class="footer-link">Blog</a></li>
-              <li><a href="#" class="footer-link">Contato</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-white font-medium mb-4">Recursos</h4>
-            <ul class="space-y-2">
-              <li><a href="#" class="footer-link">Documentação</a></li>
-              <li><a href="#" class="footer-link">API</a></li>
-              <li><a href="#" class="footer-link">Tutoriais</a></li>
-              <li><a href="#" class="footer-link">Suporte</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="text-white font-medium mb-4">Legal</h4>
-            <ul class="space-y-2">
               <li><a href="#" class="footer-link">Termos de Uso</a></li>
               <li><a href="#" class="footer-link">Privacidade</a></li>
               <li><a href="#" class="footer-link">Cookies</a></li>
@@ -876,18 +690,29 @@
   </div>
 
   <script>
+    // ✅ NOVO: Auth Management
+    let currentUser = null;
+    let userToken = null;
+
     // API Configuration
     const API_BASE_URL = '/api';
 
     // Utility function to make API calls
     async function apiCall(endpoint, options = {}) {
       try {
+        const headers = {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        };
+
+        // Add auth token if available
+        if (userToken) {
+          headers['Authorization'] = `Bearer ${userToken}`;
+        }
+
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
           ...options,
-          headers: {
-            'Content-Type': 'application/json',
-            ...options.headers,
-          },
+          headers,
         });
         
         if (!response.ok) {
@@ -899,6 +724,257 @@
         console.error('API Error:', error);
         throw error;
       }
+    }
+
+    // ✅ NOVO: Check Authentication Status
+    async function checkAuthStatus() {
+      const token = localStorage.getItem('geminii_token');
+      const userData = localStorage.getItem('geminii_user');
+
+      if (!token || !userData) {
+        showGuestView();
+        return;
+      }
+
+      try {
+        // Verify token is still valid
+        const response = await fetch('/api/auth/verify', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          userToken = token;
+          currentUser = result.data.user;
+          showUserView(currentUser);
+          console.log('✅ Usuário autenticado:', currentUser.name);
+        } else {
+          // Token invalid, clear storage
+          localStorage.removeItem('geminii_token');
+          localStorage.removeItem('geminii_user');
+          showGuestView();
+        }
+
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.removeItem('geminii_token');
+        localStorage.removeItem('geminii_user');
+        showGuestView();
+      }
+    }
+
+    // ✅ NOVO: Show Guest View
+    function showGuestView() {
+      document.getElementById('guestView').classList.remove('hidden');
+      document.getElementById('userView').classList.add('hidden');
+      document.getElementById('guestCTA').classList.remove('hidden');
+      document.getElementById('userCTA').classList.add('hidden');
+      
+      currentUser = null;
+      userToken = null;
+    }
+
+    // ✅ NOVO: Show User View
+    function showUserView(user) {
+      document.getElementById('guestView').classList.add('hidden');
+      document.getElementById('userView').classList.remove('hidden');
+      document.getElementById('guestCTA').classList.add('hidden');
+      document.getElementById('userCTA').classList.remove('hidden');
+
+      // Update user info
+      const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+      document.getElementById('userInitials').textContent = initials;
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userPlan').textContent = user.plan_name || 'Básico';
+
+      // Update plan badge
+      const planBadge = document.getElementById('planBadge');
+      const planId = user.plan_id || 1;
+      
+      if (planId === 1) {
+        planBadge.textContent = 'Free';
+        planBadge.className = 'plan-badge';
+      } else if (planId === 2) {
+        planBadge.textContent = 'Premium';
+        planBadge.className = 'plan-badge premium';
+      } else if (planId >= 3) {
+        planBadge.textContent = 'Strategic';
+        planBadge.className = 'plan-badge strategic';
+      }
+    }
+
+    // ✅ NOVO: Toggle User Menu
+    function toggleUserMenu() {
+      const userMenu = document.querySelector('.user-menu');
+      userMenu.classList.toggle('active');
+    }
+
+    // ✅ NOVO: Logout Function
+    async function logout() {
+      try {
+        if (userToken) {
+          await fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${userToken}`
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Logout error:', error);
+      } finally {
+        // Clear local storage
+        localStorage.removeItem('geminii_token');
+        localStorage.removeItem('geminii_user');
+        
+        // Show guest view
+        showGuestView();
+        
+        // Close user menu
+        document.querySelector('.user-menu').classList.remove('active');
+        
+        // Refresh page
+        window.location.reload();
+      }
+    }
+
+    // ✅ NOVO: Navigation with Auth Check
+    function navigateToPage(url, requiresAuth = false) {
+      if (requiresAuth && !currentUser) {
+        showLoginRequiredDialog(url);
+        return;
+      }
+
+      // Check plan requirements for premium features
+      if (requiresAuth && currentUser) {
+        const userPlanId = currentUser.plan_id || 1;
+        
+        if (url.includes('long-short') && userPlanId < 2) {
+          showUpgradeDialog('Long&Short', 2);
+          return;
+        }
+      }
+
+      window.location.href = url;
+    }
+
+    // ✅ NOVO: Show Login Required Dialog
+    function showLoginRequiredDialog(targetUrl) {
+      const message = `
+🔒 Acesso Restrito
+
+Para acessar este recurso, você precisa estar logado.
+
+• Recursos premium para assinantes
+• Análises avançadas e indicadores
+• Alertas personalizados
+
+Deseja fazer login agora?
+      `;
+
+      if (confirm(message)) {
+        window.location.href = `/login.html?redirect=${encodeURIComponent(targetUrl)}`;
+      }
+    }
+
+    // ✅ NOVO: Show Upgrade Dialog
+    function showUpgradeDialog(featureName, requiredPlanId) {
+      const planNames = {
+        1: 'Básico',
+        2: 'Premium', 
+        3: 'Estratégico'
+      };
+
+      const message = `
+💎 Recurso Premium
+
+${featureName} está disponível apenas para planos ${planNames[requiredPlanId]} ou superior.
+
+Seu plano atual: ${currentUser.plan_name}
+Plano necessário: ${planNames[requiredPlanId]}
+
+Deseja fazer upgrade agora?
+      `;
+
+      if (confirm(message)) {
+        window.location.href = '/planos.html';
+      }
+    }
+
+    // ✅ NOVO: Feature Dialog Functions
+    function showAlertDialog() {
+      if (!currentUser) {
+        showLoginRequiredDialog('/alertas');
+        return;
+      }
+      
+      if (currentUser.plan_id < 2) {
+        showUpgradeDialog('Alertas Inteligentes', 2);
+        return;
+      }
+
+      alert('🔔 Alertas Inteligentes\n\nEm breve! Funcionalidade em desenvolvimento.');
+    }
+
+    function showBacktestDialog() {
+      if (!currentUser) {
+        showLoginRequiredDialog('/backtests');
+        return;
+      }
+
+      if (currentUser.plan_id < 2) {
+        showUpgradeDialog('Backtests', 2);
+        return;
+      }
+
+      alert('📊 Backtests\n\nFuncionalidade disponível em seu plano!\nRedirecionando...');
+      // window.location.href = '/backtests.html';
+    }
+
+    function showSupportResistanceDialog() {
+      if (!currentUser) {
+        showLoginRequiredDialog('/support-resistance');
+        return;
+      }
+
+      if (currentUser.plan_id < 2) {
+        showUpgradeDialog('Suportes e Resistências', 2);
+        return;
+      }
+
+      alert('📈 Suportes e Resistências\n\nEm desenvolvimento para seu plano Premium!');
+    }
+
+    function showHistoricalReturnDialog() {
+      if (!currentUser) {
+        showLoginRequiredDialog('/historical-return');
+        return;
+      }
+
+      if (currentUser.plan_id < 2) {
+        showUpgradeDialog('Retorno Histórico', 2);
+        return;
+      }
+
+      alert('📊 Retorno Histórico\n\nCalculadora avançada em desenvolvimento!');
+    }
+
+    function showQuantPortfolioDialog() {
+      if (!currentUser) {
+        showLoginRequiredDialog('/quant-portfolio');
+        return;
+      }
+
+      if (currentUser.plan_id < 3) {
+        showUpgradeDialog('Carteiras Quantitativas', 3);
+        return;
+      }
+
+      alert('🤖 Carteiras Quantitativas\n\nFuncionalidade exclusiva do plano Estratégico!\nEm breve...');
     }
 
     // Check API status
@@ -914,14 +990,26 @@
         statusText.textContent = `✅ API Online - ${response.message}`;
         
         // Update nav status icon
-        apiStatusIcon.className = 'w-8 h-8 bg-green-500 bg-opacity-10 border border-green-500 border-opacity-30 rounded-full flex items-center justify-center relative';
+        if (apiStatusIcon) {
+          apiStatusIcon.className = 'w-8 h-8 bg-green-500 bg-opacity-10 border border-green-500 border-opacity-30 rounded-full flex items-center justify-center relative';
+          apiStatusIcon.innerHTML = `
+            <i class="fas fa-shield-alt text-green-500 text-xs"></i>
+            <div class="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          `;
+        }
         
       } catch (error) {
         statusIndicator.className = 'api-status offline';
         statusText.textContent = '❌ API Offline - Reconectando...';
         
         // Update nav status icon to red
-        apiStatusIcon.className = 'w-8 h-8 bg-red-500 bg-opacity-10 border border-red-500 border-opacity-30 rounded-full flex items-center justify-center relative';
+        if (apiStatusIcon) {
+          apiStatusIcon.className = 'w-8 h-8 bg-red-500 bg-opacity-10 border border-red-500 border-opacity-30 rounded-full flex items-center justify-center relative';
+          apiStatusIcon.innerHTML = `
+            <i class="fas fa-shield-alt text-red-500 text-xs"></i>
+            <div class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+          `;
+        }
       }
     }
 
@@ -960,57 +1048,11 @@
       }
     }
 
-    // Backtest simulation with API
-    async function runBacktest() {
-      const backtestBtn = document.getElementById('backtestBtn');
-      
-      // Add loading state
-      backtestBtn.classList.add('loading');
-      backtestBtn.innerHTML = 'Ativando Robôs... <div class="spinner"></div>';
-
-      try {
-        const response = await apiCall('/backtest', {
-          method: 'POST',
-          body: JSON.stringify({ 
-            strategy: 'momentum_strategy',
-            period: '12_months'
-          })
-        });
-
-        // Show backtest results
-        const resultMessage = `
-🤖 Robôs Ativados com Sucesso!
-
-📊 Estratégia: ${response.strategy}
-💰 Capital Inicial: R$ ${response.initial_capital.toLocaleString('pt-BR')}
-🚀 Capital Final: R$ ${response.final_capital.toLocaleString('pt-BR')}
-📈 Retorno: ${response.return_percent}%
-🎲 Trades: ${response.trades}
-✅ Taxa de Acerto: ${response.win_rate}%
-📊 Sharpe Ratio: ${response.sharpe_ratio}
-
-🤖 Algoritmos trabalhando 24/7!
-        `;
-        alert(resultMessage);
-
-      } catch (error) {
-        alert('❌ Erro ao ativar robôs. Tente novamente.');
-        console.error('Backtest error:', error);
-      } finally {
-        // Remove loading state
-        backtestBtn.classList.remove('loading');
-        backtestBtn.innerHTML = 'Ativar Robôs';
-      }
-    }
-
     // Get market data
     async function loadMarketData() {
       try {
         const data = await apiCall('/market-data');
         console.log('📊 Dados do mercado carregados:', data);
-        
-        // You can update the UI with real market data here
-        // For example, update the chart or display market indicators
         
       } catch (error) {
         console.error('Market data error:', error);
@@ -1061,146 +1103,71 @@
     }
 
     // DROPDOWN FUNCTIONALITY
-    
-      document.addEventListener('DOMContentLoaded', function() {
-        const dropdowns = document.querySelectorAll('.dropdown');
-        let closeTimeout;
+    document.addEventListener('DOMContentLoaded', function() {
+      const dropdowns = document.querySelectorAll('.dropdown');
+      let closeTimeout;
+      
+      dropdowns.forEach(dropdown => {
+        const toggle = dropdown.querySelector('.dropdown-toggle');
         
-        dropdowns.forEach(dropdown => {
-          const toggle = dropdown.querySelector('.dropdown-toggle');
+        // Abrir no click
+        toggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
           
-          // Abrir no click
-          toggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            // Limpar timeout se existir
-            if (closeTimeout) {
-              clearTimeout(closeTimeout);
-            }
-            
-            const isActive = dropdown.classList.contains('active');
-            
-            // Fechar todos
-            dropdowns.forEach(d => d.classList.remove('active'));
-            
-            // Abrir o clicado se não estava ativo
-            if (!isActive) {
-              dropdown.classList.add('active');
-            }
-          });
+          // Limpar timeout se existir
+          if (closeTimeout) {
+            clearTimeout(closeTimeout);
+          }
           
-          // Hover: cancelar fechamento
-          dropdown.addEventListener('mouseenter', function() {
-            if (closeTimeout) {
-              clearTimeout(closeTimeout);
-            }
-          });
+          const isActive = dropdown.classList.contains('active');
           
-          // Mouse sai: agendar fechamento em 5 segundos
-          dropdown.addEventListener('mouseleave', function() {
-            closeTimeout = setTimeout(() => {
-              dropdown.classList.remove('active');
-            }, 5000); // 5 segundos
-          });
-        });
-        
-        // Fechar ao clicar fora
-        document.addEventListener('click', function(e) {
-          if (!e.target.closest('.dropdown')) {
-            if (closeTimeout) {
-              clearTimeout(closeTimeout);
-            }
-            dropdowns.forEach(dropdown => {
-              dropdown.classList.remove('active');
-            });
+          // Fechar todos
+          dropdowns.forEach(d => d.classList.remove('active'));
+          
+          // Abrir o clicado se não estava ativo
+          if (!isActive) {
+            dropdown.classList.add('active');
           }
         });
+        
+        // Hover: cancelar fechamento
+        dropdown.addEventListener('mouseenter', function() {
+          if (closeTimeout) {
+            clearTimeout(closeTimeout);
+          }
+        });
+        
+        // Mouse sai: agendar fechamento em 5 segundos
+        dropdown.addEventListener('mouseleave', function() {
+          closeTimeout = setTimeout(() => {
+            dropdown.classList.remove('active');
+          }, 5000); // 5 segundos
+        });
       });
-
-      // Logo navigation
-      document.addEventListener('DOMContentLoaded', function() {
-        const logo = document.querySelector('.neon-logo');
-        if (logo) {
-          logo.style.cursor = 'pointer';
-          logo.parentElement.addEventListener('click', function() {
-            window.location.href = '/';
+      
+      // Fechar ao clicar fora
+      document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+          if (closeTimeout) {
+            clearTimeout(closeTimeout);
+          }
+          dropdowns.forEach(dropdown => {
+            dropdown.classList.remove('active');
           });
         }
       });
+    });
 
-    // GRÁFICO INTERATIVO COM TOOLTIP
+    // Logo navigation
     document.addEventListener('DOMContentLoaded', function() {
-      const chartPoints = document.querySelectorAll('.chart-points circle');
-      const tooltip = document.getElementById('chartTooltip');
-      const chartContainer = document.querySelector('.chart-container');
-      
-      chartPoints.forEach(point => {
-        // Mouse enter - mostrar tooltip
-        point.addEventListener('mouseenter', function(e) {
-          const value = this.getAttribute('data-value');
-          const date = this.getAttribute('data-date');
-          const rect = chartContainer.getBoundingClientRect();
-          const pointRect = this.getBoundingClientRect();
-          
-          tooltip.innerHTML = `<strong>${value}</strong><br><span style="color: #ba39af; font-size: 11px;">${date}</span>`;
-          tooltip.style.left = (pointRect.left - rect.left - 30) + 'px';
-          tooltip.style.top = (pointRect.top - rect.top - 50) + 'px';
-          tooltip.classList.add('show');
-          
-          // Efeito visual no ponto
-          this.style.transform = 'scale(1.5)';
-          this.style.filter = 'drop-shadow(0 0 15px #ba39af)';
+      const logo = document.querySelector('.neon-logo');
+      if (logo) {
+        logo.style.cursor = 'pointer';
+        logo.parentElement.addEventListener('click', function() {
+          window.location.href = '/';
         });
-        
-        // Mouse leave - esconder tooltip
-        point.addEventListener('mouseleave', function() {
-          tooltip.classList.remove('show');
-          this.style.transform = 'scale(1)';
-          this.style.filter = 'drop-shadow(0 0 6px #ba39af)';
-        });
-        
-        // Click no ponto - ação especial
-        point.addEventListener('click', function() {
-          const value = this.getAttribute('data-value');
-          const date = this.getAttribute('data-date');
-          
-          // Efeito de ripple
-          this.style.animation = 'none';
-          setTimeout(() => {
-            this.style.animation = 'popInPoints 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
-          }, 10);
-          
-          console.log(`Ponto clicado: ${date} - ${value}`);
-        });
-      });
-      
-      // Animação no hover do container do gráfico
-      chartContainer.addEventListener('mouseenter', function() {
-        // Adiciona brilho extra na linha
-        const chartLine = document.querySelector('.chart-line');
-        chartLine.style.filter = 'drop-shadow(0 0 12px #ba39af)';
-        
-        // Mostra todos os pontos
-        chartPoints.forEach(point => {
-          point.style.opacity = '1';
-        });
-      });
-      
-      chartContainer.addEventListener('mouseleave', function() {
-        // Remove brilho extra
-        const chartLine = document.querySelector('.chart-line');
-        chartLine.style.filter = 'drop-shadow(0 0 8px #ba39af)';
-        
-        // Esconde tooltip se estiver visível
-        tooltip.classList.remove('show');
-        
-        // Reset dos pontos
-        chartPoints.forEach(point => {
-          point.style.transform = 'scale(1)';
-          point.style.filter = 'drop-shadow(0 0 6px #ba39af)';
-        });
-      });
+      }
     });
 
     // Event Listeners
@@ -1215,9 +1182,6 @@
         }
       });
 
-      // Backtest button
-      document.getElementById('backtestBtn').addEventListener('click', runBacktest);
-
       // Menu interactions
       document.querySelectorAll('nav a:not(.dropdown-toggle)').forEach(link => {
         link.addEventListener('click', function(e) {
@@ -1226,12 +1190,6 @@
             console.log('Navegando para:', this.textContent);
           }
         });
-      });
-
-      // Security badge click with API status
-      document.getElementById('apiStatus').addEventListener('click', function() {
-        checkApiStatus();
-        alert('🔒 Status da Conexão\n\n✅ SSL Ativo\n✅ Dados Protegidos\n✅ API Monitorada\n\nClique para atualizar status');
       });
 
       // Social media clicks
@@ -1257,57 +1215,27 @@
         const randomStock = stocks[Math.floor(Math.random() * stocks.length)];
         getStockAnalysis(randomStock);
       });
-    });
 
-    // Botão "Ativar Robôs" com efeito especial
-    document.addEventListener('DOMContentLoaded', function() {
-      const glowButton = document.querySelector('.glow-button');
-      if (glowButton) {
-        glowButton.addEventListener('click', function(e) {
-          // Efeito de ripple
-          const ripple = document.createElement('span');
-          ripple.style.position = 'absolute';
-          ripple.style.borderRadius = '50%';
-          ripple.style.background = 'rgba(255, 255, 255, 0.6)';
-          ripple.style.transform = 'scale(0)';
-          ripple.style.animation = 'ripple 0.6s linear';
-          ripple.style.left = (e.offsetX - 10) + 'px';
-          ripple.style.top = (e.offsetY - 10) + 'px';
-          ripple.style.width = '20px';
-          ripple.style.height = '20px';
-          
-          this.appendChild(ripple);
-          
-          setTimeout(() => {
-            ripple.remove();
-          }, 600);
-        });
-      }
+      // Ver Resultados button click
+      document.querySelector('.light-pink-btn').addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Ver Resultados clicado!');
+        alert('📊 Redirecionando para resultados...');
+      });
     });
 
     // Expose functions globally for console testing
     window.geminiiAPI = {
       checkStatus: checkApiStatus,
       getMarketData: loadMarketData,
-      analyzeStock: getStockAnalysis,
-      runBacktest: runBacktest
+      analyzeStock: getStockAnalysis
     };
 
-    // Keyframes para o ripple effect
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes ripple {
-        to {
-          transform: scale(4);
-          opacity: 0;
-        }
-      }
-    `;
-    document.head.appendChild(style);
+    // Initialize the app
+    initApp();
 
     console.log('🎯 Geminii API functions available in window.geminiiAPI');
     console.log('💡 Try: geminiiAPI.analyzeStock("PETR4")');
-    console.log('💡 Try: geminiiAPI.runBacktest()');
     console.log('💡 Double-click anywhere for random stock analysis');
   </script>
 </body>
